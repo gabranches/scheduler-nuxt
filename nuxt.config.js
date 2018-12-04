@@ -14,7 +14,8 @@ module.exports = {
       { hid: 'description', name: 'description', content: pkg.description }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css' }
     ]
   },
 
@@ -29,10 +30,18 @@ module.exports = {
   css: [
   ],
 
+  env: {
+    DB_ID: 'scheduler-dev-8b976',
+    NODE_ENV: 'development',
+    HOST_URL: 'http://localhost:3000',
+    DB_URL: 'https://scheduler-dev-8b976.firebaseio.com/',
+  },
+
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/vue-leaflet', ssr: false },
   ],
 
   serverMiddleware: ['~/server/api/index'],
@@ -44,7 +53,8 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/axios-module#usage
     '@nuxtjs/axios',
     // Doc: https://bootstrap-vue.js.org/docs/
-    'bootstrap-vue/nuxt'
+    'bootstrap-vue/nuxt',
+    'nuxt-leaflet',
   ],
   /*
   ** Axios module configuration
@@ -57,6 +67,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: ['leaflet'],
     /*
     ** You can extend webpack config here
     */

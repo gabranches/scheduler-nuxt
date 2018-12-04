@@ -1,0 +1,37 @@
+@import './mixins.scss';
+$border-color: rgb(241, 241, 241);
+
+$margin: 10px;
+
+.form-header {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.unclickable {
+  cursor: default;
+}
+
+.noselect {
+@include noselect();
+}
+
+* {
+  border-radius: 0;
+}
+
+.red {
+  color: #dc3545;
+}
+
+.green {
+  color: rgb(2, 165, 2);
+}
+
+.teal {
+  color: #17a2b8;
+}
