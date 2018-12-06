@@ -135,7 +135,7 @@ export default class Scheduler {
   }
 
   /**
-   * Fetch the scheduled appointments from the database
+   * Fetch the appointment changes from the database
    */
   static featchScheduleChanges() {
     return new Promise(async (resolve, reject) => {
@@ -148,7 +148,7 @@ export default class Scheduler {
           val.id = key;
           resultArray.push(val);
         });
-        resolve(resultArray);
+        resolve(resultArray.filter(t => t.dateStamp >= helpers.dateStamp(new Date())));
       } catch (error) {
         reject(error);
       }

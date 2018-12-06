@@ -148,14 +148,10 @@ export default {
   computed: {
     scheduleTidy() {
       return this.scheduler.schedule.map((t) => {
-        // const originalSlot = _.find(this.originalSchedule, {
-        //   dateStampRoutine: t.dateStampRoutine,
-        // });
         t.date = helpers.dateStampToDate(t.dateStamp);
         t.dateText = helpers.formatDate(t.date);
         t.locationText = _.find(locations, { tag: t.location }).name;
         t.isRoutine = Scheduler.isRoutine(t);
-        // t.edited = !_.isEqual(t, originalSlot);
         return t;
       });
     },
