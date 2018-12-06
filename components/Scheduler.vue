@@ -110,10 +110,16 @@
                   </select>
                 </div>
               </div>
+              <div class="form-section" v-if="errors.length">
+                <b> Please correct the following error(s):</b>
+                <ul>
+                  <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
+                </ul>
+              </div>
               <div class="form-section" v-bind:class="{dim: steps.three === false}">
                 <button
                   v-bind:disabled="steps.three === false || steps.two === false"
-                  v-on:click="confirm(true)"
+                  v-on:click="checkFields()"
                   type="button"
                   class="btn btn-primary"
                 >Submit</button>
@@ -258,6 +264,7 @@ export default {
       dateStamp: null,
       dateText: null,
       daysAhead: globals.daysAhead,
+      errors: [],
       filledOut: false,
       locations,
       openSlotsPerAppointment: 1,
@@ -463,6 +470,30 @@ export default {
     getAppointmentSlot(time) {
       const slot = _.find(this.scheduleSlots, s => s.time === time)
       return slot
+    },
+    /**
+     * Form validation
+     */
+    checkFields() {
+      this.errors = []
+      if (!this.validEmail(this.appointment.email)) {
+        this.errors.push('Please enter a valid email address.')
+      }
+      if (!this.validPhone(this.appointment.phone)) {
+        this.errors.push('Please enter a valid phone number.')
+      }
+
+      if (this.errors.length === 0) {
+        this.confirm(true)
+      }
+    },
+    validEmail: function(email) {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      return re.test(email)
+    },
+    validPhone: function(phone) {
+      var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+      return re.test(phone)
     },
     // Submit the data to the backend
     async submit() {
