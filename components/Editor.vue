@@ -1,18 +1,43 @@
 <template>
   <div>
-    <div class="row planner-row" v-bind:key="slot.dateStampRoutine" v-for="slot in scheduleTidy">
-      <div class="planner-left">
-        <div class="row slot-row">
-          <div class="col">Date:
-            <br>
-            <select v-model="slot.dateStamp" v-on:change="editSlot(slot)">
+    <div class="row planner-wrapper">
+      <div class="col">
+        <div class="row date-pick-wrapper text-center">
+          <div class="col-3 text-right">
+            <span class="label">Select a schedule date to edit:</span>
+          </div>
+          <div class="col-6 text-left">
+            <select v-model="slot" class="form-control">
               <option
-                v-for="date in upcomingDates"
-                v-bind:key="date.id"
-                v-bind:value="date.dateStamp"
-              >{{ date.dateText }}</option>
+                v-for="day in scheduleTidy"
+                v-bind:key="day.dateStampRoutine"
+                v-bind:value="day"
+                v-bind:selected="slot.dateStampRoutine == day.dateStampRoutine"
+              >{{ day.dateText }} ({{ day.locationText }})</option>
             </select>
           </div>
+          <div class="col-3"></div>
+        </div>
+        <div class="row editor-options-wrapper">
+          <div class="col">
+            <div class="row slot-row">
+              <div class="col">Change date:
+                <br>
+                <select v-model="slot.dateStamp" v-on:change="editSlot(slot)">
+                  <option
+                    v-for="date in upcomingDates"
+                    v-bind:key="date.id"
+                    v-bind:value="date.dateStamp"
+                  >{{ date.dateText }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="col"></div>
+          <div class="col"></div>
+        </div>
+      </div>
+      <!-- <div class="planner-left">
         </div>
         <div class="row slot-row">
           <div class="col">
@@ -107,7 +132,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
     </div>
   </div>
 </template>
@@ -138,6 +163,7 @@ export default {
       },
       locations,
       originalSchedule: null,
+      slot: null,
       slotTypes,
       scheduleSlots,
       upcomingDates: []
@@ -147,6 +173,7 @@ export default {
     this.today = new Date()
     this.generateDays()
     this.originalSchedule = _.cloneDeep(this.scheduler.schedule)
+    this.slot = this.scheduleTidy[0]
   },
   computed: {
     scheduleTidy() {
@@ -225,10 +252,6 @@ export default {
   margin: 20px 0px;
 }
 
-// .planner-mid > .row {
-//   overflow-x: auto;
-//   white-space: nowrap;
-// }
 .planner-right > .row > .col {
   border-right: 1px solid #dee2e6;
   padding: 0 20px;
@@ -251,5 +274,20 @@ export default {
 .planner-right {
   background-color: #f3f3f3;
   padding: 20px;
+}
+
+.date-pick-wrapper {
+  background-color: #dee2e6;
+  div {
+    margin: 15px 0;
+  }
+  .label {
+    font-weight: bold;
+    line-height: 35px;
+  }
+}
+
+.editor-options-wrapper {
+  background-color: #f3f3f3;
 }
 </style>
