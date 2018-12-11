@@ -1,3 +1,6 @@
+import _ from 'lodash';
+import slotTypes from '../data/slotTypes';
+
 export default class helpers {
   static timestampToStringFull = (timestamp) => {
     const date = new Date(timestamp);
@@ -75,6 +78,10 @@ export default class helpers {
       hour = 12;
     }
     return `${hour}:${minute} ${suffix}`;
+  }
+
+  static getApptShortText(type) {
+    return _.find(slotTypes, { type: type }).shortText;
   }
 
   static addAppointmentProps = (appt) => {

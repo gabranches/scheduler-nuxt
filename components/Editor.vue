@@ -7,7 +7,7 @@
             <span class="label">Select a schedule date to edit:</span>
           </div>
           <div class="col-6 text-left">
-            <select v-model="slot" class="form-control">
+            <select v-model="slot" class="form-control" @change="selectTimeSlot()">
               <option
                 v-for="day in scheduleTidy"
                 v-bind:key="day.dateStampRoutine"
@@ -19,7 +19,7 @@
           <div class="col-3"></div>
         </div>
         <div class="row editor-options-wrapper">
-          <div class="col">
+          <div class="col editor-bottom-col">
             <div class="row slot-row">
               <div class="col">Change date:
                 <br>
@@ -32,9 +32,96 @@
                 </select>
               </div>
             </div>
+            <div class="row slot-row">
+              <div class="col">Change location:
+                <br>
+                <select v-model="slot.location" v-on:change="editSlot(slot)">
+                  <option
+                    v-for="location in locations"
+                    v-bind:key="location.tag"
+                    v-bind:value="location.tag"
+                  >{{ location.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row slot-row">
+              <div class="col">
+                <button
+                  class="btn btn-danger"
+                  v-if="slot.edited"
+                  v-on:click="submitScheduleChange(slot)"
+                >Save Changes</button>
+                <button
+                  class="btn btn-warning"
+                  disabled
+                  v-if="slot.isRoutine && !slot.edited"
+                >Routine Schedule</button>
+              </div>
+            </div>
           </div>
-          <div class="col"></div>
-          <div class="col"></div>
+          <div class="col editor-bottom-col">
+            <div
+              class="appt-col text-right row timeslot-button"
+              v-bind:key="timeSlot.start"
+              v-for="timeSlot in slot.timeSlots"
+              @click="selectTimeSlot(timeSlot)"
+            >{{ helpers.getApptShortText(timeSlot.type) }}: {{ timeSlot.start}}</div>
+          </div>
+          <div class="col editor-bottom-col">
+            <div class="row slot-row">
+              <div class="col">Type:</div>
+              <div class="col">
+                <select v-model="timeSlot.type" v-on:change="editSlot(slot)">
+                  <option
+                    v-for="type in slotTypes"
+                    v-bind:key="type.type"
+                    v-bind:value="type.type"
+                  >{{ type.shortText }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row slot-row">
+              <div class="col">Start Time:</div>
+              <div class="col">
+                <select v-model="timeSlot.start" v-on:change="editSlot(slot)">
+                  <option
+                    v-for="start in scheduleSlots"
+                    v-bind:key="start.time"
+                    v-bind:value="start.time"
+                  >{{ start.text }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row slot-row">
+              <div class="col">Duration:</div>
+              <div class="col">
+                <select v-model="timeSlot.duration" v-on:change="editSlot(slot)">
+                  <option value="0">Remove Slot</option>
+                  <option value="30">30 Minutes</option>
+                  <option value="60">60 Minutes</option>
+                  <option value="90">90 Minutes</option>
+                </select>
+              </div>
+            </div>
+            <div class="row slot-row">
+              <div class="col">Total Slots:</div>
+              <div class="col">
+                <select v-model="timeSlot.open" v-on:change="editSlot(slot)">
+                  <option value="0">0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                </select>
+              </div>
+            </div>
+            <div class="row slot-row">
+              <div class="col">Booked Slots:</div>
+              <div class="col" v-bind:class="classBooked(timeSlot.booked)">{{ timeSlot.booked }}</div>
+            </div>
+          </div>
         </div>
       </div>
       <!-- <div class="planner-left">
@@ -161,11 +248,13 @@ export default {
       filters: {
         upcoming: true
       },
+      helpers,
       locations,
       originalSchedule: null,
       slot: null,
       slotTypes,
       scheduleSlots,
+      timeSlot: null,
       upcomingDates: []
     }
   },
@@ -174,6 +263,7 @@ export default {
     this.generateDays()
     this.originalSchedule = _.cloneDeep(this.scheduler.schedule)
     this.slot = this.scheduleTidy[0]
+    this.timeSlot = this.slot.timeSlots[0]
   },
   computed: {
     scheduleTidy() {
@@ -187,6 +277,13 @@ export default {
     }
   },
   methods: {
+    selectTimeSlot(timeSlot) {
+      if (timeSlot) {
+        this.timeSlot = timeSlot
+      } else {
+        this.timeSlot = this.slot.timeSlots[0]
+      }
+    },
     generateDays() {
       const dates = []
       for (let i = 0; i < this.daysAhead; i += 1) {
@@ -246,6 +343,7 @@ export default {
 
 .slot-row {
   line-height: 40px;
+  margin-bottom: 10px;
 }
 
 .planner-row {
@@ -289,5 +387,17 @@ export default {
 
 .editor-options-wrapper {
   background-color: #f3f3f3;
+}
+
+.editor-bottom-col {
+  padding: 30px;
+}
+
+.timeslot-button {
+  font-size: 14px;
+  padding: 5px;
+  border: 1px solid black;
+  margin: 5px;
+  cursor: pointer;
 }
 </style>

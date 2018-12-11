@@ -111,7 +111,7 @@
                 </div>
               </div>
               <div class="form-section" v-if="errors.length">
-                <b> Please correct the following error(s):</b>
+                <b>Please correct the following error(s):</b>
                 <ul>
                   <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
                 </ul>
