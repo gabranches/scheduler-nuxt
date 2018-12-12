@@ -226,7 +226,8 @@ export default {
 }
 
 .planner-row {
-  margin: 20px 0px;
+  // margin: 0px 0;
+  margin-bottom: 15px;
 }
 
 // .planner-mid > .row {
@@ -244,8 +245,8 @@ export default {
 
 .planner-left {
   background-color: #dee2e6;
-  padding: 20px;
-  width: 250px;
+  padding: 15px;
+  // width: 250px;
 }
 
 .planner-left select {
@@ -254,6 +255,6 @@ export default {
 
 .planner-right {
   background-color: #f3f3f3;
-  padding: 20px;
+  padding: 15px;
 }
 </style>

@@ -16,14 +16,29 @@
               >{{ day.dateText }} - {{ day.locationText }}</option>
             </select>
           </div>
-          <div class="col-3"></div>
+          <div class="col-3">
+            <button
+              class="btn btn-info"
+              v-if="slot.edited"
+              v-on:click="submitScheduleChange(slot)"
+            >Save Changes</button>
+            <button
+              class="btn btn-warning"
+              disabled
+              v-if="slot.isRoutine && !slot.edited"
+            >Routine Schedule</button>
+          </div>
         </div>
         <div class="row editor-options-wrapper">
           <div class="col editor-bottom-col general-slot-options">
+            <div class="row">
+              <span class="small-header bold">General Options</span>
+            </div>
             <div class="row slot-row">
-              <div class="col"><span class="bold">Date</span>
+              <div class="col">
+                <span class="bold">Date</span>
                 <br>
-                <select v-model="slot.dateStamp" v-on:change="editSlot(slot)">
+                <select v-model="slot.dateStamp" class="form-control" v-on:change="editSlot(slot)">
                   <option
                     v-for="date in upcomingDates"
                     v-bind:key="date.id"
@@ -33,9 +48,10 @@
               </div>
             </div>
             <div class="row slot-row">
-              <div class="col"><span class="bold">Location</span>
+              <div class="col">
+                <span class="bold">Location</span>
                 <br>
-                <select v-model="slot.location" v-on:change="editSlot(slot)">
+                <select class="form-control" v-model="slot.location" v-on:change="editSlot(slot)">
                   <option
                     v-for="location in locations"
                     v-bind:key="location.tag"
@@ -45,21 +61,16 @@
               </div>
             </div>
             <div class="row slot-row">
-              <div class="col">
-                <button
-                  class="btn btn-danger"
-                  v-if="slot.edited"
-                  v-on:click="submitScheduleChange(slot)"
-                >Save Changes</button>
-                <button
-                  class="btn btn-warning"
-                  disabled
-                  v-if="slot.isRoutine && !slot.edited"
-                >Routine Schedule</button>
-              </div>
+              <button
+                class="btn btn-info add-timeslot-button"
+                @click="[addTimeSlot(), editSlot(slot)]"
+              >Add Time Slot</button>
             </div>
           </div>
           <div class="col editor-bottom-col timeslot-select">
+            <div class="row">
+              <span class="small-header bold">Choose a Time Slot to Edit</span>
+            </div>
             <div
               class="appt-col text-right row timeslot-button"
               v-bind:key="timeSlot.start"
@@ -72,7 +83,7 @@
             <div class="row slot-row">
               <div class="col-5 text-right bold">Time Slot Type</div>
               <div class="col-7">
-                <select v-model="timeSlot.type" v-on:change="editSlot(slot)">
+                <select v-model="timeSlot.type" class="form-control" v-on:change="editSlot(slot)">
                   <option
                     v-for="type in slotTypes"
                     v-bind:key="type.type"
@@ -84,7 +95,7 @@
             <div class="row slot-row">
               <div class="col-5 text-right bold">Start Time</div>
               <div class="col-7">
-                <select v-model="timeSlot.start" v-on:change="editSlot(slot)">
+                <select v-model="timeSlot.start" class="form-control" v-on:change="editSlot(slot)">
                   <option
                     v-for="start in scheduleSlots"
                     v-bind:key="start.time"
@@ -96,7 +107,11 @@
             <div class="row slot-row">
               <div class="col-5 text-right bold">Duration</div>
               <div class="col-7">
-                <select v-model="timeSlot.duration" v-on:change="editSlot(slot)">
+                <select
+                  class="form-control"
+                  v-model="timeSlot.duration"
+                  v-on:change="editSlot(slot)"
+                >
                   <option value="30">30 Minutes</option>
                   <option value="60">60 Minutes</option>
                   <option value="90">90 Minutes</option>
@@ -106,7 +121,7 @@
             <div class="row slot-row">
               <div class="col-5 text-right bold">Total Slots</div>
               <div class="col-7">
-                <select v-model="timeSlot.open" v-on:change="editSlot(slot)">
+                <select class="form-control" v-model="timeSlot.open" v-on:change="editSlot(slot)">
                   <option value="0">0</option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -120,6 +135,18 @@
             <div class="row slot-row">
               <div class="col-5 text-right bold">Booked Slots</div>
               <div class="col-7" v-bind:class="classBooked(timeSlot.booked)">{{ timeSlot.booked }}</div>
+            </div>
+            <div class="row slot-row">
+              <div class="col-5 text-right bold"></div>
+              <div class="col-7">
+                <div class="row slot-row">
+                  <button
+                    class="btn btn-danger add-timeslot-button"
+                    @click="[deleteTimeSlot(), editSlot(slot)]"
+                    v-show="slot.timeSlots.length > 1"
+                  >Delete Time Slot</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -176,6 +203,7 @@ export default {
         t.dateText = helpers.formatDate(t.date)
         t.locationText = _.find(locations, { tag: t.location }).name
         t.isRoutine = Scheduler.isRoutine(t)
+        t.timeSlots = _.orderBy(t.timeSlots, 'start', 'asc')
         return t
       })
     }
@@ -190,6 +218,17 @@ export default {
     },
     isTimeslotSelected(timeSlot) {
       return timeSlot == this.timeSlot
+    },
+    addTimeSlot() {
+      const totalSlots = this.slot.timeSlots.length
+      const newSlot = _.cloneDeep(this.slot.timeSlots[totalSlots - 1])
+      this.slot.timeSlots.push(newSlot)
+    },
+    deleteTimeSlot() {
+      this.slot.timeSlots = _.filter(this.slot.timeSlots, timeSlot => {
+        return timeSlot !== this.timeSlot
+      })
+      this.timeSlot = this.slot.timeSlots[0]
     },
     generateDays() {
       const dates = []
@@ -301,7 +340,7 @@ export default {
 }
 
 .editor-bottom-col {
-  padding: 30px;
+  padding: 15px;
 }
 
 .timeslot-button {
@@ -318,6 +357,7 @@ export default {
 .timeslot-options {
   background-color: rgba(23, 162, 184, 0.22);
   border-left: 5px solid #17a2b8;
+  padding: 30px;
   // color: white;
 }
 
@@ -327,8 +367,19 @@ export default {
 }
 
 .general-slot-options {
+  padding: 15px 45px;
   select {
-    width: 200px;
+    // width: 200px;
   }
+}
+
+.small-header {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.add-timeslot-button {
+  margin-top: 15px;
+  margin-left: 15px;
 }
 </style>

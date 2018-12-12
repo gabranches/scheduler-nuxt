@@ -300,12 +300,15 @@ export default {
      */
     scheduleSlots() {
       if (this.appointmentSlots) {
-        const start = Number(this.appointmentSlots[0].start) - 100
+        // const start = Number(this.appointmentSlots[0].start) - 100
+        const start = Number(
+          _.minBy(this.appointmentSlots, o => Number(o.start)).start
+        ) - 100
         const end = Number(
           _.maxBy(this.appointmentSlots, o => Number(o.start)).start
         )
         return scheduleSlots.filter(
-          s => Number(s.time) >= start && Number(s.time) <= end + 200
+          s => Number(s.time) >= start && Number(s.time) <= end + 100
         )
       }
       return scheduleSlots
@@ -515,8 +518,6 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/styles/theme.scss';
 @import '../assets/styles/mixins.scss';
-
-
 
 #scheduler-wrapper {
   margin-top: 50px;
