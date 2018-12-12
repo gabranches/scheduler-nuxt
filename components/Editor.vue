@@ -73,7 +73,7 @@
             </div>
             <div
               class="appt-col text-right row timeslot-button"
-              v-bind:key="timeSlot.start"
+              v-bind:key="timeSlot.id"
               v-for="timeSlot in slot.timeSlots"
               v-bind:class="{ selected: isTimeslotSelected(timeSlot), bold: isTimeslotSelected(timeSlot)  }"
               @click="selectTimeSlot(timeSlot)"
@@ -222,7 +222,9 @@ export default {
     addTimeSlot() {
       const totalSlots = this.slot.timeSlots.length
       const newSlot = _.cloneDeep(this.slot.timeSlots[totalSlots - 1])
+      newSlot.booked = "0"
       this.slot.timeSlots.push(newSlot)
+      this.timeSlot = this.slot.timeSlots[totalSlots]
     },
     deleteTimeSlot() {
       this.slot.timeSlots = _.filter(this.slot.timeSlots, timeSlot => {
