@@ -217,6 +217,10 @@ export default {
 @import '~/assets/styles/theme.scss';
 @import '~/assets/styles/mixins.scss';
 
+* {
+  font-size: 14px;
+}
+
 .slot-row {
   line-height: 40px;
 }

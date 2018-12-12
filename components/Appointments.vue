@@ -145,6 +145,10 @@ export default {
 @import "~/assets/styles/theme.scss";
 @import "~/assets/styles/mixins.scss";
 
+* {
+  font-size: 14px;
+}
+
 li > a {
   font-size: 16px;
   font-weight: bold;

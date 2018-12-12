@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fixed">
+  <div class="container">
     <div class="row" v-if="!secure">
       <div class="col">
         <input v-model="pass" placeholder="Enter password" type="password" v-on:keyup="runHash()">
@@ -11,8 +11,8 @@
     <div class="spacer"></div>
     <appointments v-if="scheduler && secure" v-bind:scheduler="scheduler"></appointments>
     <div class="spacer"></div>
-    <location-emitter v-if="scheduler && secure"></location-emitter>
-    <div class="spacer"></div>
+    <!-- <location-emitter v-if="scheduler && secure"></location-emitter>
+    <div class="spacer"></div> -->
     <div class="row" v-if="secure">
       <div class="col form-header">Schedule Editor</div>
     </div>

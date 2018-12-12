@@ -256,7 +256,7 @@ export default {
   data() {
     return {
       appointment: {
-        status: 'Booked'
+        status: 'Booked',
       },
       appointmentSlots: null,
       date: null,
@@ -515,6 +515,8 @@ export default {
 <style lang="scss" scoped>
 @import '../assets/styles/theme.scss';
 @import '../assets/styles/mixins.scss';
+
+
 
 #scheduler-wrapper {
   margin-top: 50px;
