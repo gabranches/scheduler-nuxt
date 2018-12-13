@@ -159,11 +159,13 @@
                     class="col time-slot-space"
                     v-bind:class="getAppointmentClass('appt', slot.time)"
                     v-on:click="setAppointmentTimeText('appt', slot.time)"
-                  >{{ getAppointmentText('appt', slot.time) }}</div>
+                  >
+                    <span v-html="getAppointmentText('appt', slot.time)"></span>
+                  </div>
                   <div
                     class="col time-slot-space"
                     v-bind:class="getAppointmentClass('walkin', slot.time)"
-                  >{{ getAppointmentText('walkin', slot.time) }}</div>
+                  ><span v-html="getAppointmentText('walkin', slot.time)"></span></div>
                 </div>
               </div>
             </div>
@@ -465,11 +467,11 @@ export default {
       if (appt) {
         if (Number(appt.open) - Number(appt.booked) > 0) {
           if (appt.start === time)
-            return `${appt.text}\n${helpers.convertMilitary(appt.start)}`
+            return `${appt.text}<br>${helpers.convertMilitary(appt.start)}`
         }
         if (Number(appt.open) - Number(appt.booked) <= 0) {
           if (appt.start === time)
-            return `Time Slot Booked\n${helpers.convertMilitary(appt.start)}`
+            return `Time Slot Booked<br>${helpers.convertMilitary(appt.start)}`
         }
       }
       return ''
