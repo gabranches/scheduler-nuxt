@@ -256,7 +256,7 @@ export default {
   data() {
     return {
       appointment: {
-        status: 'Booked',
+        status: 'Booked'
       },
       appointmentSlots: null,
       date: null,
@@ -301,9 +301,9 @@ export default {
     scheduleSlots() {
       if (this.appointmentSlots) {
         // const start = Number(this.appointmentSlots[0].start) - 100
-        const start = Number(
-          _.minBy(this.appointmentSlots, o => Number(o.start)).start
-        ) - 100
+        const start =
+          Number(_.minBy(this.appointmentSlots, o => Number(o.start)).start) -
+          100
         const end = Number(
           _.maxBy(this.appointmentSlots, o => Number(o.start)).start
         )
@@ -409,18 +409,25 @@ export default {
      */
     getAppointmentClass(type, time) {
       const appt = this.getAppointment(type, time)
+      console.log(appt)
+      let text = ''
       if (appt) {
-        if (type === 'walkin') return 'walkin'
+        if (type === 'walkin') text += 'walkin'
         if (type === 'appt') {
           if (Number(appt.open) - Number(appt.booked) > 0) {
-            return 'appt-open'
+            text += 'appt-open'
           }
           if (Number(appt.open) - Number(appt.booked) <= 0) {
-            return 'appt-booked'
+            text += 'appt-booked'
           }
         }
+        if (appt.start === time) {
+          text += ' slot-top'
+        }
+      } else {
+        text = 'empty-slot'
       }
-      return 'empty-slot'
+      return text
     },
     /**
      * Generates the date/time text for the form when the user clicks an appointment
@@ -619,5 +626,9 @@ export default {
   font-size: 16px;
   vertical-align: middle;
   margin-bottom: 10px;
+}
+
+.slot-top {
+  border-top: 2px solid black;
 }
 </style>
