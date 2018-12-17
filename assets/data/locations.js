@@ -6,6 +6,7 @@ export default [
     city: 'Hialeah',
     state: 'FL',
     zip: 33012,
+    short: 'Hialeah',
   },
   {
     tag: 'gaythering-miami-beach',
@@ -14,6 +15,7 @@ export default [
     city: 'Miami Beach',
     state: 'FL',
     zip: 33139,
+    short: 'Miami Beach',
   },
   {
     tag: 'soccer-park-little-haiti',
@@ -22,6 +24,7 @@ export default [
     city: 'Miami',
     state: 'FL',
     zip: 33138,
+    short: 'Little Haiti',
   },
   {
     tag: 'wic-florida-city',
@@ -30,5 +33,6 @@ export default [
     city: 'Florida City',
     state: 'FL',
     zip: 33034,
+    short: 'Homestead',
   },
 ];

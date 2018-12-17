@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import slotTypes from '../data/slotTypes';
+import locations from '../data/locations';
 
 export default class helpers {
   static timestampToStringFull = (timestamp) => {
@@ -60,6 +61,10 @@ export default class helpers {
   static zerofy = (num) => {
     if (num.toString().length < 2) return `0${num.toString()}`;
     return num;
+  }
+
+  static locationShort(location) {
+    return _.find(locations, {tag : location}).short
   }
 
   static convertMilitary = (time) => {
