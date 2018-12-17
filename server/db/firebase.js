@@ -20,6 +20,16 @@ self.updateStatus = (id, status) => {
   return new Promise(async (resolve, reject) => {
     const ref = firebase.database().ref('/appointments');
     const appt = ref.child(id);
+    // Save check-in time if the update is a
+    if (status === 'Checked-In') {
+      const time = new Date()
+      try {
+        await appt.update({ checkInTime: time })
+        resolve();  
+      } catch (error) {
+        reject(error);
+      }
+    }
     try {
       await appt.child('status').set(status);
       resolve();  

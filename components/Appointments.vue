@@ -17,10 +17,10 @@
               <th>Location</th>
               <th>Time</th>
               <th>Name</th>
-              <th>Status</th>
               <th>Type</th>
-              <th></th>
-              <th></th>
+              <th>Status</th>
+              <th>Administrator Actions</th>
+              <!-- <th></th> -->
             </tr>
           </thead>
           <tbody>
@@ -28,13 +28,13 @@
               <td class="align-middle">{{appt.dateText}}</td>
               <td class="align-middle">{{ helpers.locationShort(appt.location) }}</td>
               <td class="align-middle">{{appt.timeText}}</td>
-              <td class="align-middle clickable">
-                <div v-on:click="toggleDetails(appt)">{{appt.firstName}} {{appt.lastName}}</div>
-                <div v-on:click="toggleDetails(appt)" v-if="showDetails">{{appt.phone}}</div>
-                <div v-on:click="toggleDetails(appt)" v-if="showDetails">{{appt.email}}</div>
+              <td class="align-middle clickable" v-on:click="toggleDetails(appt)">
+                <div>{{appt.firstName}} {{appt.lastName}}</div>
+                <div v-if="showDetails">{{appt.phone}}</div>
+                <div v-if="showDetails">{{appt.email}}</div>
               </td>
-              <td class="align-middle" v-bind:class="classStatus(appt.status)">{{appt.status}}</td>
               <td class="align-middle">{{appt.type}}</td>
+              <td class="align-middle" v-bind:class="classStatus(appt.status)">{{appt.status}}</td>
               <td class="align-middle">
                 <button
                   v-if="appt.status === 'Booked'"
@@ -42,22 +42,47 @@
                   class="btn btn-info"
                 >Check-In</button>
                 <button
+                  v-if="appt.status === 'Booked'"
+                  v-on:click="updateStatus(appt, 'No-Show')"
+                  class="btn btn-secondary"
+                >No-Show</button>
+                <button
                   v-if="appt.status === 'Checked-In'"
                   v-on:click="updateStatus(appt, 'Booked')"
                   class="btn btn-light"
                 >Undo Check-In</button>
-              </td>
-              <td class="align-middle">
                 <button
-                  v-if="appt.status === 'Booked' || appt.status === 'Checked-In'"
-                  v-on:click="updateStatus(appt, 'Canceled')"
-                  class="btn btn-danger"
-                >Cancel</button>
+                  v-if="appt.status === 'No-Show'"
+                  v-on:click="updateStatus(appt, 'Booked')"
+                  class="btn btn-light"
+                >Undo No-Show</button>
                 <button
                   v-if="appt.status === 'Canceled'"
                   v-on:click="updateStatus(appt, 'Booked')"
                   class="btn btn-light"
                 >Undo Cancel</button>
+                <button
+                  v-if="appt.status === 'Pending Delete'"
+                  v-on:click="updateStatus(appt, 'Canceled')"
+                  class="btn btn-light"
+                >Go Back</button>
+              <!-- </td>
+              <td class="align-middle"> -->
+                <button
+                  v-if="appt.status === 'Canceled'"
+                  v-on:click="updateStatus(appt, 'Pending Delete')"
+                  class="btn btn-dark"
+                >DELETE RECORD</button>
+                <button
+                  v-if="appt.status === 'Pending Delete'"
+                  v-on:click="updateStatus(appt, 'Deleted')"
+                  class="btn btn-dark"
+                >CONFIRM DELETE</button>
+                <button
+                  v-if="appt.status === 'Booked'"
+                  v-on:click="updateStatus(appt, 'Canceled')"
+                  class="btn btn-danger"
+                >Cancel</button>
               </td>
             </tr>
           </tbody>
@@ -87,7 +112,7 @@ export default {
       filters: {
         upcoming: true
       },
-      showDetails: false,
+      showDetails: false
     }
   },
   created() {
@@ -109,6 +134,7 @@ export default {
           a => a.dateStamp < dateStamp
         )
       }
+      appts = appts.filter(a => a.status !== 'Deleted')
       return _.orderBy(appts, ['dateStamp', 'time'], [order, order])
     }
   },
@@ -135,6 +161,9 @@ export default {
       }
       if (status === 'Checked-In') {
         return 'teal'
+      }
+      if (status === 'No-Show') {
+        return 'dark-grey'
       }
       return 'red'
     },

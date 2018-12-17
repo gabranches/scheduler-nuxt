@@ -411,7 +411,6 @@ export default {
      */
     getAppointmentClass(type, time) {
       const appt = this.getAppointment(type, time)
-      console.log(appt)
       let text = ''
       if (appt) {
         if (type === 'walkin') text += 'walkin'
