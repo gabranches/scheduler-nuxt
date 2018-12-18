@@ -63,6 +63,13 @@ export default class helpers {
     return num;
   }
 
+  static getSet = (field, filteredList) => {
+    const set = new Set(filteredList.map(p => p[field]));
+    const values = [];
+    set.forEach(i => values.push(i));
+    return values;
+  };
+
   static locationShort(location) {
     return _.find(locations, {tag : location}).short
   }

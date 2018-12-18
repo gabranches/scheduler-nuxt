@@ -20,12 +20,89 @@
               <th>Type</th>
               <th>Status</th>
               <th>Administrator Actions</th>
-              <!-- <th></th> -->
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td>
+                <select
+                  v-model="filters.dropdowns.dateStamp"
+                  class="form-control form-control-sm filter-select"
+                >
+                  <option>All</option>
+                  <option
+                    v-for="item in helpers.getSet('dateStamp', apptsPrimed)"
+                    :key="item"
+                    v-bind:value="item"
+                  >{{ helpers.formatDate(helpers.dateStampToDate(item), true) }}</option>
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="filters.dropdowns.location"
+                  class="form-control form-control-sm filter-select"
+                >
+                  <option>All</option>
+                  <option
+                    v-for="item in helpers.getSet('location', apptsPrimed)"
+                    :key="item"
+                    v-bind:value="item"
+                  >{{ helpers.locationShort(item) }}</option>
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="filters.dropdowns.timeText"
+                  class="form-control form-control-sm filter-select"
+                >
+                  <option>All</option>
+                  <option
+                    v-for="item in helpers.getSet('timeText', apptsPrimed)"
+                    :key="item"
+                    v-bind:value="item"
+                  >{{ item }}</option>
+                </select>
+              </td>
+              <td>
+                <input
+                  v-model="filters.inputs.name"
+                  class="form-control form-control-sm filter-select"
+                >
+              </td>
+              <td>
+                <select
+                  v-model="filters.dropdowns.type"
+                  class="form-control form-control-sm filter-select"
+                >
+                  <option>All</option>
+                  <option
+                    v-for="item in helpers.getSet('type', apptsPrimed)"
+                    :key="item"
+                    v-bind:value="item"
+                  >{{ item }}</option>
+                </select>
+              </td>
+              <td>
+                <select
+                  v-model="filters.dropdowns.status"
+                  class="form-control form-control-sm filter-select"
+                >
+                  <option>All</option>
+                  <option
+                    v-for="item in helpers.getSet('status', apptsPrimed)"
+                    :key="item"
+                    v-bind:value="item"
+                  >{{ item }}</option>
+                </select>
+              </td>
+              <td>
+                <button @click="clearFilters()" class="btn btn-light">Clear Filters</button>
+              </td>
+            </tr>
             <tr v-bind:key="appt.id" v-for="appt in apptsFiltered">
-              <td class="align-middle">{{appt.dateText}}</td>
+              <td
+                class="align-middle"
+              >{{ helpers.formatDate(helpers.dateStampToDate(appt.dateStamp), true) }}</td>
               <td class="align-middle">{{ helpers.locationShort(appt.location) }}</td>
               <td class="align-middle">{{appt.timeText}}</td>
               <td class="align-middle clickable" v-on:click="toggleDetails(appt)">
@@ -66,8 +143,8 @@
                   v-on:click="updateStatus(appt, 'Canceled')"
                   class="btn btn-light"
                 >Go Back</button>
-              <!-- </td>
-              <td class="align-middle"> -->
+                <!-- </td>
+                <td class="align-middle">-->
                 <button
                   v-if="appt.status === 'Canceled'"
                   v-on:click="updateStatus(appt, 'Pending Delete')"
@@ -110,7 +187,17 @@ export default {
       today: null,
       helpers,
       filters: {
-        upcoming: true
+        upcoming: true,
+        dropdowns: {
+          dateStamp: 'All',
+          location: 'All',
+          timeText: 'All',
+          type: 'All',
+          status: 'All'
+        },
+        inputs: {
+          name: ''
+        }
       },
       showDetails: false
     }
@@ -119,8 +206,8 @@ export default {
     this.today = new Date()
   },
   computed: {
-    apptsFiltered() {
-      const order = this.filters.upcoming ? 'asc' : 'desc'
+    // Apply initial filters
+    apptsPrimed() {
       const dateStamp = helpers.dateStamp(this.today)
       let appts = null
       if (this.filters.upcoming) {
@@ -134,11 +221,39 @@ export default {
           a => a.dateStamp < dateStamp
         )
       }
-      appts = appts.filter(a => a.status !== 'Deleted')
+      return appts.filter(a => a.status !== 'Deleted')
+    },
+    // Apply dropdown filters
+    apptsFiltered() {
+      const order = this.filters.upcoming ? 'asc' : 'desc'
+      let appts = this.applyFilters(this.apptsPrimed)
+      appts = appts.filter(a => {
+        const name = `${a.firstName} ${a.lastName}`
+        return name
+          .toLowerCase()
+          .includes(this.filters.inputs.name.toLowerCase())
+      })
       return _.orderBy(appts, ['dateStamp', 'time'], [order, order])
     }
   },
   methods: {
+    applyFilters(list) {
+      Object.entries(this.filters.dropdowns).forEach(entry => {
+        const [key, value] = entry
+        if (value && value !== 'All') {
+          list = list.filter(t => t[key] === value)
+        }
+      })
+      return list
+    },
+    clearFilters() {
+      this.filters.dropdowns.dateStamp = 'All'
+      this.filters.dropdowns.location = 'All'
+      this.filters.dropdowns.timeText = 'All'
+      this.filters.dropdowns.type = 'All'
+      this.filters.dropdowns.status = 'All'
+      this.filters.inputs.name = ''
+    },
     toggleDetails(appt) {
       if (this.showDetails) {
         this.showDetails = false
@@ -189,6 +304,10 @@ export default {
 
 * {
   font-size: 14px;
+  select,
+  button {
+    font-size: 12px;
+  }
 }
 
 li > a {
