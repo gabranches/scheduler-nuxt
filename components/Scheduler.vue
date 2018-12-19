@@ -509,7 +509,7 @@ export default {
     // Submit the data to the backend
     async submit() {
       const apptData = this.appointment
-      console.log(apptData)
+      apptData.created = new Date()
       axios
         .post(`${process.env.HOST_URL}/api/add/appointment`, apptData)
         .then(function(response) {

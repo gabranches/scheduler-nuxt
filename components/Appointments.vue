@@ -149,7 +149,7 @@
                   v-if="appt.status === 'Canceled'"
                   v-on:click="updateStatus(appt, 'Pending Delete')"
                   class="btn btn-dark"
-                >DELETE RECORD</button>
+                >DELETE</button>
                 <button
                   v-if="appt.status === 'Pending Delete'"
                   v-on:click="updateStatus(appt, 'Deleted')"
