@@ -8,7 +8,6 @@ const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
 
 app.set('port', port)
-app.use(cors());
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
@@ -23,6 +22,9 @@ async function start() {
     const builder = new Builder(nuxt)
     await builder.build()
   }
+
+  // Enable CORS
+  app.use(cors());
 
   // Give nuxt middleware to express
   app.use(nuxt.render)
