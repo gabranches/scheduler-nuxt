@@ -6,7 +6,7 @@ const projectId = process.env.DB_ID;
 
 // Initialize Firebase
 const config = {
-  apiKey: "AIzaSyCP4GIk3idTnuAu7sFsdGohxMFgFmfCFxM",
+  apiKey: process.env.FIREBASE_KEY,
   authDomain: projectId + ".firebaseapp.com",
   databaseURL: "https://" + projectId + ".firebaseio.com",
   projectId: projectId,
