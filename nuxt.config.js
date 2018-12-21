@@ -31,10 +31,10 @@ module.exports = {
   ],
 
   env: {
-    DB_ID: 'scheduler-dev-8b976',
-    NODE_ENV: 'development',
-    HOST_URL: 'http://localhost:3000',
-    DB_URL: 'https://scheduler-dev-8b976.firebaseio.com/',
+    DB_ID: process.env.DB_ID || 'scheduler-dev-8b976',
+    NODE_ENV: process.env.NODE_ENV || 'development',
+    HOST_URL: process.env.HOST_URL || 'http://localhost:3000',
+    DB_URL: process.env.DB_URL || 'https://scheduler-dev-8b976.firebaseio.com/',
   },
 
   /*
