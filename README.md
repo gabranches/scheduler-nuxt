@@ -1,7 +1,3 @@
-# nuxt-template
-
-> Nuxt Template
-
 ## Build Setup
 
 ``` bash
