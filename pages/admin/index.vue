@@ -17,11 +17,12 @@
       <div class="col form-header">Schedule Editor</div>
     </div>
     <editor v-if="scheduler && secure" v-bind:scheduler="scheduler"></editor>
-    <div class="spacer"></div>
+    
+    <!-- <div class="spacer"></div>
     <div class="row" v-if="secure">
       <div class="col form-header">Schedule Planner</div>
     </div>
-    <!-- <planner v-if="scheduler && secure" v-bind:scheduler="scheduler"></planner> -->
+    <planner v-if="scheduler && secure" v-bind:scheduler="scheduler"></planner> -->
   </div>
 </template>
 

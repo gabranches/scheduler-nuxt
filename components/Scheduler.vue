@@ -453,6 +453,7 @@ export default {
           this.appointment.timeText = slot.text
           this.appointment.dateStamp = this.dateStamp
           this.appointment.dateText = this.dateText
+          this.stepTwo = true
         }
       }
       this.$forceUpdate()

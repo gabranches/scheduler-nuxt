@@ -23,7 +23,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr class="filter-row">
               <td>
                 <select
                   v-model="filters.dropdowns.dateStamp"
@@ -313,5 +313,9 @@ export default {
 li > a {
   font-size: 16px;
   font-weight: bold;
+}
+
+.filter-row {
+  background-color: rgb(222, 226, 230) !important;
 }
 </style>
