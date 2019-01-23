@@ -230,6 +230,7 @@
                 <td>{{ appointment.timeText }}</td>
               </tr>
             </table>
+            <div class="g-recaptcha" data-sitekey="6LdpvDEUAAAAAMy8x0y8PS99j4BavfO2oBdVTQGZ"></div>
             <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
             <router-link
               to="/confirm"

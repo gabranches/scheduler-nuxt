@@ -38,11 +38,14 @@ export default class Scheduler {
       } catch (error) {
         reject(error);
       }
-      let rotationNum = Math.floor((this.today.getTime()/1000/60/60/24) % 14) + 3
+      
+      let rotationNum = Math.floor((this.today.getTime()/1000/60/60/24) % 14)
+      console.log(rotationNum)
       for (let i = 0; i < this.daysAhead; i += 1) {
         const currentDate = helpers.addDays(this.today, i);
         const todayDateStamp = Number(helpers.dateStamp(currentDate));
         const scheduleSlot = _.find(this._scheduleRotation, { day: rotationNum });
+        
         if (scheduleSlot) {
           const newSlot = _.cloneDeep(scheduleSlot);
           newSlot.dateStamp = todayDateStamp.toString();
@@ -56,6 +59,7 @@ export default class Scheduler {
           rotationNum += 1;
         }
       }
+      
       this.applyScheduleChanges();
       this.removeBookedSlots();
       resolve();

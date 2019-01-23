@@ -1,6 +1,6 @@
 export default [
   {
-    day: 1,
+    day: 11,
     location: 'gaythering-miami-beach',
     timeSlots: [
       {
@@ -34,7 +34,7 @@ export default [
     ],
   },
   {
-    day: 3,
+    day: 13,
     location: 'wellness-hialeah',
     timeSlots: [
       {
@@ -68,7 +68,7 @@ export default [
     ],
   },
   {
-    day: 9,
+    day: 5,
     location: 'wic-florida-city',
     timeSlots: [
       {
@@ -102,7 +102,7 @@ export default [
     ],
   },
   {
-    day: 11,
+    day: 7,
     location: 'soccer-park-little-haiti',
     timeSlots: [
       {

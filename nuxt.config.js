@@ -15,7 +15,16 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css' }
+      {
+        rel: 'stylesheet',
+        href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css'
+      }
+    ],
+    script: [
+      {
+        src:
+          'https://www.google.com/recaptcha/api.js?render=6LdRSIwUAAAAANsUtM13x5hrzI0c9xSNYF3TmpJo'
+      }
     ]
   },
 
@@ -27,25 +36,22 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: [
-  ],
+  css: [],
 
   env: {
     DB_ID: process.env.DB_ID || 'scheduler-dev-8b976',
     NODE_ENV: process.env.NODE_ENV || 'development',
     HOST_URL: process.env.HOST_URL || 'https://localhost:3000',
     DB_URL: process.env.DB_URL || 'https://scheduler-dev-8b976.firebaseio.com/',
-    FIREBASE_KEY: process.env.FIREBASE_KEY,
+    FIREBASE_KEY: process.env.FIREBASE_KEY
   },
 
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [
-    { src: '~/plugins/vue-leaflet', ssr: false },
-  ],
+  plugins: [{ src: '~/plugins/vue-leaflet', ssr: false }],
 
-  serverMiddleware: ['~/server/api/index'],
+  serverMiddleware: ['~/server/api/index', '~/server/verify/index'],
 
   /*
   ** Nuxt.js modules
@@ -55,7 +61,7 @@ module.exports = {
     '@nuxtjs/axios',
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
-    'nuxt-leaflet',
+    'nuxt-leaflet'
   ],
   /*
   ** Axios module configuration
@@ -75,7 +81,7 @@ module.exports = {
     extend(config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
-        config.devtool = '#source-map',
+        ;(config.devtool = '#source-map'),
           config.module.rules.push({
             enforce: 'pre',
             test: /\.(js|vue)$/,
