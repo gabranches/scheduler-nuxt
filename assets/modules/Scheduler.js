@@ -40,7 +40,6 @@ export default class Scheduler {
       }
       
       let rotationNum = Math.floor((this.today.getTime()/1000/60/60/24) % 14)
-      console.log(rotationNum)
       for (let i = 0; i < this.daysAhead; i += 1) {
         const currentDate = helpers.addDays(this.today, i);
         const todayDateStamp = Number(helpers.dateStamp(currentDate));

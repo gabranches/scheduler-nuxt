@@ -29,6 +29,8 @@
     "lodash": "^4.17.11",
     "nuxt": "^2.0.0",
     "nuxt-leaflet": "0.0.10",
+    "request": "^2.88.0",
+    "vue-recaptcha": "^1.1.1",
     "vue2-leaflet": "^1.2.3"
   },
   "devDependencies": {

@@ -23,7 +23,7 @@ module.exports = {
     script: [
       {
         src:
-          'https://www.google.com/recaptcha/api.js?render=6LdRSIwUAAAAANsUtM13x5hrzI0c9xSNYF3TmpJo'
+          'https://www.google.com/recaptcha/api.js'
       }
     ]
   },
@@ -41,7 +41,7 @@ module.exports = {
   env: {
     DB_ID: process.env.DB_ID || 'scheduler-dev-8b976',
     NODE_ENV: process.env.NODE_ENV || 'development',
-    HOST_URL: process.env.HOST_URL || 'https://localhost:3000',
+    HOST_URL: process.env.HOST_URL || 'http://localhost:3000',
     DB_URL: process.env.DB_URL || 'https://scheduler-dev-8b976.firebaseio.com/',
     FIREBASE_KEY: process.env.FIREBASE_KEY
   },

@@ -2,6 +2,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const firebase = require('../db/firebase.js')
+const verify = require('../verify.js')
 
 app.use(bodyParser.json())
 
@@ -46,11 +47,11 @@ app.post('/update/location', async (request, response) => {
 
 app.post('/add/appointment', async (request, response) => {
   try {
+    const captcha = await verify(request)
     await firebase.addAppointment(request.body)
-    console.log(request.body)
-    response.sendStatus(200)
+    response.send(captcha)
   } catch (error) {
-    console.error(error)
+    console.log(error)
     response.sendStatus(500)
   }
 })

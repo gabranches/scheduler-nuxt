@@ -14,7 +14,7 @@ app.get('/', function(request, response) {
     return response.json({ success: false, body: 'Please complete the captcha.' })
   }
 
-  const secretKey = '6LdRSIwUAAAAAFzWXZ16003wqLgOuP9tvLcGffEx'
+  const secretKey = '6LfeSIwUAAAAAMzwEOth0_UG23fSAidaHtj4dyt-'
 
   const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
     request.body.captcha

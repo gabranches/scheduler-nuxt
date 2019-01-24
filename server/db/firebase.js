@@ -8,7 +8,7 @@ const projectId = process.env.DB_ID;
 const config = {
   apiKey: process.env.FIREBASE_KEY,
   authDomain: projectId + ".firebaseapp.com",
-  databaseURL: "https://" + projectId + ".firebaseio.com",
+  databaseURL: process.env.DB_URL,
   projectId: projectId,
   storageBucket: projectId + ".appspot.com",
   messagingSenderId: "856849552430"

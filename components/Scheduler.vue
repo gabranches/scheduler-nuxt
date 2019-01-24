@@ -1,9 +1,9 @@
 <template>
   <div id="scheduler-wrapper">
-    <div v-if="!filledOut" class="row">
+    <div class="row">
       <div class="col form-header">Schedule an Appointment</div>
     </div>
-    <div v-if="!filledOut" class="row">
+    <div class="row">
       <div id="form-wrapper" class="col">
         <div class="row">
           <div class="col">
@@ -116,9 +116,12 @@
                   <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
                 </ul>
               </div>
+              <div class="form-group">
+                <div class="g-recaptcha" data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"></div>
+              </div>
               <div class="form-section" v-bind:class="{dim: steps.three === false}">
                 <button
-                  v-bind:disabled="steps.three === false || steps.two === false"
+                  v-bind:disabled="!steps.three || !steps.two"
                   v-on:click="checkFields()"
                   type="button"
                   class="btn btn-primary"
@@ -165,7 +168,9 @@
                   <div
                     class="col time-slot-space"
                     v-bind:class="getAppointmentClass('walkin', slot.time)"
-                  ><span v-html="getAppointmentText('walkin', slot.time)"></span></div>
+                  >
+                    <span v-html="getAppointmentText('walkin', slot.time)"></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -230,14 +235,8 @@
                 <td>{{ appointment.timeText }}</td>
               </tr>
             </table>
-            <div class="g-recaptcha" data-sitekey="6LdpvDEUAAAAAMy8x0y8PS99j4BavfO2oBdVTQGZ"></div>
             <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
-            <router-link
-              to="/confirm"
-              v-on:click.native="submit()"
-              tag="button"
-              class="btn btn-primary"
-            >Confirm</router-link>
+            <button v-on:click="submit()" tag="button" class="btn btn-primary">Confirm</button>
           </div>
         </div>
       </div>
@@ -278,7 +277,7 @@ export default {
       scheduleIndex: 0,
       scheduledAppointments: [],
       stepTwo: false,
-      today: null
+      today: null,
     }
   },
   created() {
@@ -298,6 +297,9 @@ export default {
         zip: ''
       }
     },
+    // captcha() {
+    //   return grecaptcha.getResponse()
+    // },
     /**
      * Filter the schedule slots so that it only shows time slots near the appointments
      */
@@ -331,7 +333,7 @@ export default {
       return {
         one,
         two: this.stepTwo,
-        three
+        three,
       }
     }
   },
@@ -497,7 +499,7 @@ export default {
       }
 
       if (this.errors.length === 0) {
-        this.confirm(true)
+        this.submit()
       }
     },
     validEmail: function(email) {
@@ -512,10 +514,19 @@ export default {
     async submit() {
       const apptData = this.appointment
       apptData.created = new Date()
+      apptData.captcha = grecaptcha.getResponse()
       axios
         .post(`${process.env.HOST_URL}/api/add/appointment`, apptData)
         .then(function(response) {
           console.log(response)
+          
+          if (response.data.success) {
+            console.log(response)
+            window.location.href = '/confirm'
+          } else {
+            console.log(response.data.body)
+            
+          }
         })
         .catch(function(error) {
           console.log(error)
@@ -633,5 +644,9 @@ export default {
 
 .slot-top {
   border-top: 2px solid black;
+}
+
+.confirmation-wrapper {
+  margin-top: 30px;
 }
 </style>
