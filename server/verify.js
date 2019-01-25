@@ -13,7 +13,7 @@ module.exports = req => {
       })
     }
 
-    const secretKey = '6LfeSIwUAAAAAMzwEOth0_UG23fSAidaHtj4dyt-'
+    const secretKey = process.env.CAPTCHA_SECRET
 
     const verifyUrl = `https://google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${
       req.body.captcha

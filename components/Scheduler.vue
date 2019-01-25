@@ -1,246 +1,260 @@
 <template>
   <div id="scheduler-wrapper">
-    <div class="row">
-      <div class="col form-header">Schedule an Appointment</div>
-    </div>
-    <div class="row">
-      <div id="form-wrapper" class="col">
-        <div class="row">
-          <div class="col">
-            <form>
-              <div class="form-section">
-                <div class="form-section-title">
-                  <p>Step 1: Select a location</p>
-                </div>
-                <div class="form-group">
-                  <label for="appt-location">Appointment Location:</label>
-                  <select
-                    v-model="appointment.location"
-                    v-on:change="updateLocation()"
-                    class="form-control"
-                    id="appt-location"
-                  >
-                    <option
-                      v-bind:key="loc.tag"
-                      v-for="loc in locations"
-                      v-bind:value="loc.tag"
-                    >{{ loc.name }}</option>
-                  </select>
-                </div>
-                <div v-if="steps.one" class="address">
-                  <p>
-                    <strong>You've selected this location:</strong>
-                  </p>
-                  {{ location.name }}
-                  <br>
-                  {{ location.address }}
-                  <br>
-                  {{ location.city }}, {{ location.state }} {{ location.zip }}
-                </div>
-              </div>
-
-              <div class="form-section" v-bind:class="{dim: steps.one === false}">
-                <div class="form-section-title">
-                  <p>Step 2: Pick an appointment time</p>
-                </div>
-                <div class="form-group">
-                  <label for="appt-time">Appointment Time:</label>
-                  <input
-                    v-bind:placeholder="getTimeInputText()"
-                    class="form-control"
-                    type="text"
-                    disabled
-                    readonly
-                  >
-                </div>
-              </div>
-              <div class="form-section" v-bind:class="{dim: steps.two === false}">
-                <div class="form-section-title">Step 3: Enter your personal information</div>
-
-                <div class="form-group">
-                  <label for="first-name">First Name:</label>
-                  <input
-                    v-bind:disabled="steps.two === false"
-                    v-model="appointment.firstName"
-                    type="text"
-                    class="form-control"
-                    id="first-name"
-                  >
-                </div>
-                <div class="form-group">
-                  <label for="last-name">Last Name:</label>
-                  <input
-                    v-bind:disabled="steps.two === false"
-                    v-model="appointment.lastName"
-                    type="text"
-                    class="form-control"
-                    id="last-name"
-                  >
-                </div>
-                <div class="form-group">
-                  <label for="email">Email Address:</label>
-                  <input
-                    v-bind:disabled="steps.two === false"
-                    v-model="appointment.email"
-                    type="email"
-                    class="form-control"
-                    id="email"
-                  >
-                </div>
-                <div class="form-group">
-                  <label for="phone">Phone Number:</label>
-                  <input
-                    v-bind:disabled="steps.two === false"
-                    v-model="appointment.phone"
-                    type="tel"
-                    class="form-control"
-                    id="phone"
-                  >
-                </div>
-                <div class="form-group">
-                  <label for="appt-type">Appointment Type:</label>
-                  <select
-                    v-bind:disabled="steps.two === false"
-                    v-model="appointment.type"
-                    class="form-control"
-                    id="appt-type"
-                  >
-                    <option>First Visit</option>
-                    <option>Follow-Up</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-section" v-if="errors.length">
-                <b>Please correct the following error(s):</b>
-                <ul>
-                  <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
-                </ul>
-              </div>
-              <div class="form-group">
-                <div class="g-recaptcha" data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"></div>
-              </div>
-              <div class="form-section" v-bind:class="{dim: steps.three === false}">
-                <button
-                  v-bind:disabled="!steps.three || !steps.two"
-                  v-on:click="checkFields()"
-                  type="button"
-                  class="btn btn-primary"
-                >Submit</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="col" v-bind:class="{dim: steps.one === false}">
-        <div class="row time-picker-wrapper">
-          <div class="col">
-            <div class="row picker-header">
-              <div class="col-2 date-button">
-                <button v-if="scheduleIndex > 0" v-on:click="addDays(-1)" class="btn btn-light">-</button>
-              </div>
-              <div class="col-8 noselect">{{ dateText }}</div>
-              <div class="col-2 date-button">
-                <button
-                  v-if="scheduleIndex < scheduleFiltered.length - 1"
-                  class="btn btn-light"
-                  v-on:click="addDays(1)"
-                >+</button>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col location-indicator text-center">{{ location.name }}</div>
-            </div>
-            <div class="row dates-wrapper">
-              <div class="col">
-                <div
-                  class="row noselect time-slot"
-                  v-for="slot in scheduleSlots"
-                  v-bind:key="slot.index"
-                >
-                  <div class="col time-slot-time">{{ slot.text }}</div>
-                  <div
-                    class="col time-slot-space"
-                    v-bind:class="getAppointmentClass('appt', slot.time)"
-                    v-on:click="setAppointmentTimeText('appt', slot.time)"
-                  >
-                    <span v-html="getAppointmentText('appt', slot.time)"></span>
-                  </div>
-                  <div
-                    class="col time-slot-space"
-                    v-bind:class="getAppointmentClass('walkin', slot.time)"
-                  >
-                    <span v-html="getAppointmentText('walkin', slot.time)"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-if="filledOut" class="row confirmation-wrapper">
+    <div v-if="showScheduler" class="row scheduler-wrapper">
       <div class="col">
         <div class="row">
-          <div class="col form-header">Please Confirm your Appointment</div>
+          <div class="col form-header">Schedule an Appointment</div>
         </div>
         <div class="row">
-          <div class="col">
-            <table class="confirm-list">
-              <tr>
-                <td>
-                  <span class="bold">First Name:</span>
-                </td>
-                <td>{{ appointment.firstName }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Last Name:</span>
-                </td>
-                <td>{{ appointment.lastName }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Email:</span>
-                </td>
-                <td>{{ appointment.email }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Phone Number:</span>
-                </td>
-                <td>{{ appointment.phone }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Appointment Type:</span>
-                </td>
-                <td>{{ appointment.type }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Appointment Location:</span>
-                </td>
-                <td>{{ location.name }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Appointment Date:</span>
-                </td>
-                <td>{{ appointment.dateText }}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span class="bold">Appointment Time:</span>
-                </td>
-                <td>{{ appointment.timeText }}</td>
-              </tr>
-            </table>
-            <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
-            <button v-on:click="submit()" tag="button" class="btn btn-primary">Confirm</button>
+          <div id="form-wrapper" class="col">
+            <div class="row">
+              <div class="col">
+                <form>
+                  <div class="form-section">
+                    <div class="form-section-title">
+                      <p>Step 1: Select a location</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="appt-location">Appointment Location:</label>
+                      <select
+                        v-model="appointment.location"
+                        v-on:change="updateLocation()"
+                        class="form-control"
+                        id="appt-location"
+                      >
+                        <option
+                          v-bind:key="loc.tag"
+                          v-for="loc in locations"
+                          v-bind:value="loc.tag"
+                        >{{ loc.name }}</option>
+                      </select>
+                    </div>
+                    <div v-if="steps.one" class="address">
+                      <p>
+                        <strong>You've selected this location:</strong>
+                      </p>
+                      {{ location.name }}
+                      <br>
+                      {{ location.address }}
+                      <br>
+                      {{ location.city }}, {{ location.state }} {{ location.zip }}
+                    </div>
+                  </div>
+
+                  <div class="form-section" v-bind:class="{dim: steps.one === false}">
+                    <div class="form-section-title">
+                      <p>Step 2: Pick an appointment time</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="appt-time">Appointment Time:</label>
+                      <input
+                        v-bind:placeholder="getTimeInputText()"
+                        class="form-control"
+                        type="text"
+                        disabled
+                        readonly
+                      >
+                    </div>
+                  </div>
+                  <div class="form-section" v-bind:class="{dim: steps.two === false}">
+                    <div class="form-section-title">Step 3: Enter your personal information</div>
+
+                    <div class="form-group">
+                      <label for="first-name">First Name:</label>
+                      <input
+                        v-bind:disabled="steps.two === false"
+                        v-model="appointment.firstName"
+                        type="text"
+                        class="form-control"
+                        id="first-name"
+                      >
+                    </div>
+                    <div class="form-group">
+                      <label for="last-name">Last Name:</label>
+                      <input
+                        v-bind:disabled="steps.two === false"
+                        v-model="appointment.lastName"
+                        type="text"
+                        class="form-control"
+                        id="last-name"
+                      >
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email Address:</label>
+                      <input
+                        v-bind:disabled="steps.two === false"
+                        v-model="appointment.email"
+                        type="email"
+                        class="form-control"
+                        id="email"
+                      >
+                    </div>
+                    <div class="form-group">
+                      <label for="phone">Phone Number:</label>
+                      <input
+                        v-bind:disabled="steps.two === false"
+                        v-model="appointment.phone"
+                        type="tel"
+                        class="form-control"
+                        id="phone"
+                      >
+                    </div>
+                    <div class="form-group">
+                      <label for="appt-type">Appointment Type:</label>
+                      <select
+                        v-bind:disabled="steps.two === false"
+                        v-model="appointment.type"
+                        class="form-control"
+                        id="appt-type"
+                      >
+                        <option>First Visit</option>
+                        <option>Follow-Up</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-section" v-if="errors.length">
+                    <b>Please correct the following error(s):</b>
+                    <ul>
+                      <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
+                    </ul>
+                  </div>
+                  <div class="form-group">
+                    <div
+                      class="g-recaptcha"
+                      data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"
+                    ></div>
+                  </div>
+                  <div class="form-section" v-bind:class="{dim: steps.three === false}">
+                    <button
+                      v-bind:disabled="!steps.three || !steps.two"
+                      v-on:click="checkFields()"
+                      type="button"
+                      class="btn btn-primary"
+                    >Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col" v-bind:class="{dim: steps.one === false}">
+            <div class="row time-picker-wrapper">
+              <div class="col">
+                <div class="row picker-header">
+                  <div class="col-2 date-button">
+                    <button
+                      v-if="scheduleIndex > 0"
+                      v-on:click="addDays(-1)"
+                      class="btn btn-light"
+                    >-</button>
+                  </div>
+                  <div class="col-8 noselect">{{ dateText }}</div>
+                  <div class="col-2 date-button">
+                    <button
+                      v-if="scheduleIndex < scheduleFiltered.length - 1"
+                      class="btn btn-light"
+                      v-on:click="addDays(1)"
+                    >+</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col location-indicator text-center">{{ location.name }}</div>
+                </div>
+                <div class="row dates-wrapper">
+                  <div class="col">
+                    <div
+                      class="row noselect time-slot"
+                      v-for="slot in scheduleSlots"
+                      v-bind:key="slot.index"
+                    >
+                      <div class="col time-slot-time">{{ slot.text }}</div>
+                      <div
+                        class="col time-slot-space"
+                        v-bind:class="getAppointmentClass('appt', slot.time)"
+                        v-on:click="setAppointmentTimeText('appt', slot.time)"
+                      >
+                        <span v-html="getAppointmentText('appt', slot.time)"></span>
+                      </div>
+                      <div
+                        class="col time-slot-space"
+                        v-bind:class="getAppointmentClass('walkin', slot.time)"
+                      >
+                        <span v-html="getAppointmentText('walkin', slot.time)"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <no-ssr>
+      <div v-if="showConfirmation" class="row confirmation-wrapper">
+        <div class="col">
+          <div class="row">
+            <div class="col form-header">Please Confirm your Appointment</div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <table class="confirm-list">
+                <tr>
+                  <td>
+                    <span class="bold">First Name:</span>
+                  </td>
+                  <td>{{ appointment.firstName }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Last Name:</span>
+                  </td>
+                  <td>{{ appointment.lastName }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Email:</span>
+                  </td>
+                  <td>{{ appointment.email }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Phone Number:</span>
+                  </td>
+                  <td>{{ appointment.phone }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Appointment Type:</span>
+                  </td>
+                  <td>{{ appointment.type }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Appointment Location:</span>
+                  </td>
+                  <td>{{ location.name }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Appointment Date:</span>
+                  </td>
+                  <td>{{ appointment.dateText }}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="bold">Appointment Time:</span>
+                  </td>
+                  <td>{{ appointment.timeText }}</td>
+                </tr>
+              </table>
+
+              <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
+              <button v-on:click="submit()" tag="button" class="btn btn-primary">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </no-ssr>
   </div>
 </template>
 
@@ -278,10 +292,12 @@ export default {
       scheduledAppointments: [],
       stepTwo: false,
       today: null,
+      showScheduler: true,
+      showConfirmation: false
     }
   },
   created() {
-    this.today = new Date()
+    this.today = new Date()   
     this.createSchedule()
   },
   computed: {
@@ -297,15 +313,11 @@ export default {
         zip: ''
       }
     },
-    // captcha() {
-    //   return grecaptcha.getResponse()
-    // },
     /**
      * Filter the schedule slots so that it only shows time slots near the appointments
      */
     scheduleSlots() {
       if (this.appointmentSlots) {
-        // const start = Number(this.appointmentSlots[0].start) - 100
         const start =
           Number(_.minBy(this.appointmentSlots, o => Number(o.start)).start) -
           100
@@ -333,7 +345,7 @@ export default {
       return {
         one,
         two: this.stepTwo,
-        three,
+        three
       }
     }
   },
@@ -391,6 +403,7 @@ export default {
     },
     confirm(state) {
       this.filledOut = state
+      setTimeout(() => grecaptcha.render(), 1000)
     },
     /**
      * Adds or removes days from the scheduleIndex
@@ -519,13 +532,12 @@ export default {
         .post(`${process.env.HOST_URL}/api/add/appointment`, apptData)
         .then(function(response) {
           console.log(response)
-          
+
           if (response.data.success) {
             console.log(response)
             window.location.href = '/confirm'
           } else {
             console.log(response.data.body)
-            
           }
         })
         .catch(function(error) {

@@ -1,6 +1,7 @@
 
 const express = require('express')
 const consola = require('consola')
+require('dotenv').config()
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
 var cors = require('cors')

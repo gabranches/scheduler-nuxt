@@ -1,14 +1,5 @@
 export default [
   {
-    tag: 'wellness-hialeah',
-    name: 'Community Health and Wellness Center of Miami',
-    address: '1671 West 37th Street',
-    city: 'Hialeah',
-    state: 'FL',
-    zip: 33012,
-    short: 'Hialeah',
-  },
-  {
     tag: 'gaythering-miami-beach',
     name: 'Hotel Gaythering',
     address: '1409 Lincoln Road',
@@ -18,13 +9,13 @@ export default [
     short: 'Miami Beach',
   },
   {
-    tag: 'soccer-park-little-haiti',
-    name: 'Little Haiti Soccer Park',
-    address: '6301 NE 2nd Avenue',
-    city: 'Miami',
+    tag: 'wellness-hialeah',
+    name: 'Community Health and Wellness Center of Miami',
+    address: '1671 West 37th Street',
+    city: 'Hialeah',
     state: 'FL',
-    zip: 33138,
-    short: 'Little Haiti',
+    zip: 33012,
+    short: 'Hialeah',
   },
   {
     tag: 'wic-florida-city',
@@ -34,5 +25,14 @@ export default [
     state: 'FL',
     zip: 33034,
     short: 'Homestead',
+  },
+  {
+    tag: 'soccer-park-little-haiti',
+    name: 'Little Haiti Soccer Park',
+    address: '6301 NE 2nd Avenue',
+    city: 'Miami',
+    state: 'FL',
+    zip: 33138,
+    short: 'Little Haiti',
   },
 ];

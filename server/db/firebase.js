@@ -2,15 +2,13 @@ require('dotenv').config();
 const firebase = require('firebase');
 const self = {};
 
-const projectId = process.env.DB_ID;
-
 // Initialize Firebase
 const config = {
   apiKey: process.env.FIREBASE_KEY,
-  authDomain: projectId + ".firebaseapp.com",
+  authDomain: process.env.DB_ID + ".firebaseapp.com",
   databaseURL: process.env.DB_URL,
-  projectId: projectId,
-  storageBucket: projectId + ".appspot.com",
+  projectId: process.env.DB_ID,
+  storageBucket: process.env.DB_ID + ".appspot.com",
   messagingSenderId: "856849552430"
 };
 
