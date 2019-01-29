@@ -77,13 +77,8 @@ self.addAppointment = appointment => {
     try {
       await ref.push(appointment)
       resolve()
-    } catch {
-      reject(
-        new Error(
-          'Error adding appointment to firebase',
-          'server/db/firebase.js'
-        )
-      )
+    } catch (error) {
+      reject(new Error(`Could not add apointment: ${error}`))
     }
   })
 }

@@ -222,7 +222,7 @@ export default {
     addTimeSlot() {
       const totalSlots = this.slot.timeSlots.length
       const newSlot = _.cloneDeep(this.slot.timeSlots[totalSlots - 1])
-      newSlot.booked = "0"
+      newSlot.booked = '0'
       this.slot.timeSlots.push(newSlot)
       this.timeSlot = this.slot.timeSlots[totalSlots]
     },
@@ -250,16 +250,18 @@ export default {
       return ''
     },
     async updateStatus(appt, status) {
-      try {
-        await this.$http.post(`${process.env.HOST_URL}/api/update/status`, {
+      await axios
+        .post(`${process.env.HOST_URL}/api/update/status`, {
           id: appt.id,
           status
         })
-        console.log('Status updated.')
-        await this.scheduler.buildSchedule()
-      } catch (error) {
-        console.error(error)
-      }
+        .then(async res => {
+          console.log(res.data)
+          await this.scheduler.buildSchedule()
+        })
+        .catch(error => {
+          console.error(error)
+        })
     },
     editSlot(slot) {
       slot.edited = true
@@ -269,17 +271,16 @@ export default {
      */
     async submitScheduleChange(scheduleSlot) {
       scheduleSlot.timeChanged = new Date()
-      try {
-        scheduleSlot.edited = false
-        await axios.post(
-          `${process.env.HOST_URL}/api/add/schedule-change`,
-          scheduleSlot
-        )
-        console.log('Schedule change submitted.')
-      } catch (error) {
-        scheduleSlot.edited = true
-        console.error(error)
-      }
+      scheduleSlot.edited = false
+      await axios
+        .post(`${process.env.HOST_URL}/api/add/schedule-change`, scheduleSlot)
+        .then(res => {
+          console.log(res.data)
+        })
+        .catch(error => {
+          scheduleSlot.edited = true
+          console.error(error)
+        })
     }
   }
 }

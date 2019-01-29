@@ -41,11 +41,9 @@ export default class Scheduler {
 
       const timeUTC = this.today.getTime()
       const timeZoneOffset = this.today.getTimezoneOffset()
-      const timeEST = timeUTC - (1000 * 60 * timeZoneOffset) // Adjust time for EST timezone
+      const timeEST = timeUTC - 1000 * 60 * timeZoneOffset // Adjust time for EST timezone
 
       let rotationNum = Math.floor((timeEST / 1000 / 60 / 60 / 24) % 14)
-      console.log(rotationNum)
-      console.log(this.today)
 
       for (let i = 0; i < this.daysAhead; i += 1) {
         const currentDate = helpers.addDays(this.today, i)

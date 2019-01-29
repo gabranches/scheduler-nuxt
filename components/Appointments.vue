@@ -283,16 +283,19 @@ export default {
       return 'red'
     },
     async updateStatus(appt, status) {
-      try {
-        await axios.post(`${process.env.HOST_URL}/api/update/status`, {
+      await axios
+        .post(`${process.env.HOST_URL}/api/update/status`, {
           id: appt.id,
           status
         })
-        console.log('Status updated.')
-        await this.scheduler.buildSchedule()
-      } catch (error) {
-        console.error(error)
-      }
+        .then(async res => {
+          await this.scheduler.buildSchedule()
+          console.log(res.data)
+          
+        })
+        .catch(err => {
+          console.log(error)
+        })
     }
   }
 }
