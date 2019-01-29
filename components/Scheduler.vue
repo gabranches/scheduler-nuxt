@@ -527,9 +527,12 @@ export default {
     async submit() {
       const apptData = this.appointment
       apptData.created = new Date()
-      apptData.captcha = grecaptcha.getResponse()
+      const body = {
+        captcha: grecaptcha.getResponse(),
+        appointment: apptData
+      }
       axios
-        .post(`${process.env.HOST_URL}/api/add/appointment`, apptData)
+        .post(`${process.env.HOST_URL}/api/add/appointment`, body)
         .then(function(response) {
           console.log(response)
 

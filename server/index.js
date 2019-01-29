@@ -1,4 +1,3 @@
-
 const express = require('express')
 const consola = require('consola')
 require('dotenv').config()
@@ -25,7 +24,7 @@ async function start() {
   }
 
   // Enable CORS
-  app.use(cors());
+  app.use(cors())
 
   // Give nuxt middleware to express
   app.use(nuxt.render)

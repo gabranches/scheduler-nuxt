@@ -11,7 +11,10 @@ app.get('/', function(request, response) {
     request.body.captcha === '' ||
     request.body.captcha === null
   ) {
-    return response.json({ success: false, body: 'Please complete the captcha.' })
+    return response.json({
+      success: false,
+      body: 'Please complete the captcha.'
+    })
   }
 
   const secretKey = '6LfeSIwUAAAAAMzwEOth0_UG23fSAidaHtj4dyt-'
@@ -23,7 +26,10 @@ app.get('/', function(request, response) {
   axios(verifyUrl, (err, response, body) => {
     body = JSON.parse(body)
     if (body.success !== undefined && !body.success) {
-      return response.json({ success: false, body: 'Failed to verify captcha.' })
+      return response.json({
+        success: false,
+        body: 'Failed to verify captcha.'
+      })
     }
     return response.json({ success: true, body: 'Captcha verified.' })
   })

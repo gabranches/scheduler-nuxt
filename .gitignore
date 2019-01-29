@@ -79,3 +79,6 @@ dist
 
 # IDE
 .idea
+
+# Server log directory
+server/log

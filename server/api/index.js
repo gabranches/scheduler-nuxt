@@ -3,6 +3,7 @@ const express = require('express')
 const app = express()
 const firebase = require('../db/firebase.js')
 const verify = require('../verify.js')
+const logger = require('../logger.js')
 
 app.use(bodyParser.json())
 
@@ -48,11 +49,25 @@ app.post('/update/location', async (request, response) => {
 app.post('/add/appointment', async (request, response) => {
   try {
     const captcha = await verify(request)
-    await firebase.addAppointment(request.body)
-    response.send(captcha)
+    if (!captcha.success) {
+      response.send({
+        success: false,
+        body: 'Failed to verify captcha.'
+      })
+    }
+    const appointment = request.body.appointment
+    await firebase.addAppointment(appointment)
+    logger.info(`Added appointment ${JSON.stringify(appointment)}`)
+    response.send({
+      success: true,
+      body: 'Appointment added.'
+    })
   } catch (error) {
-    console.log(error)
-    response.sendStatus(500)
+    logger.error(error)
+    response.send({
+      success: false,
+      body: 'Not able to add appointment due to server error.'
+    })
   }
 })
 
