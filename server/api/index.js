@@ -4,10 +4,11 @@ const app = express()
 const firebase = require('../db/firebase.js')
 const verify = require('../verify.js')
 const logger = require('../logger.js')
+const mail = require('../mail.js')
 
 app.use(bodyParser.json())
 
-app.post('/', function(request, response) {
+app.post('/location', function(request, response) {
   db.insertLocation(request.body)
   response.status(200).json({ status: 'success' })
 })
@@ -60,6 +61,7 @@ app.post('/add/appointment', async (request, response) => {
     const appointment = request.body.appointment
     await firebase.addAppointment(appointment)
     logger.info(`Added appointment ${JSON.stringify(appointment)}`)
+    mail.send(appointment)
     response.status(200).send({
       success: true,
       text: 'Appointment added.'

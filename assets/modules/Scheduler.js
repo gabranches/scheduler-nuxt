@@ -30,45 +30,38 @@ export default class Scheduler {
       this._schedule = []
       try {
         this._scheduledAppointments = await Scheduler.fetchAppointments()
-      } catch (error) {
-        reject(error)
-      }
-      try {
         this._scheduleChanges = await Scheduler.fetchScheduleChanges()
+        const timeUTC = this.today.getTime()
+        const timeZoneOffset = this.today.getTimezoneOffset()
+        const timeEST = timeUTC - 1000 * 60 * timeZoneOffset // Adjust time for EST timezone
+        let rotationNum = Math.floor((timeEST / 1000 / 60 / 60 / 24) % 14)
+
+        for (let i = 0; i < this.daysAhead; i += 1) {
+          const currentDate = helpers.addDays(this.today, i)
+          const todayDateStamp = Number(helpers.dateStamp(currentDate))
+          const scheduleSlot = _.find(this._scheduleRotation, {
+            day: rotationNum
+          })
+
+          if (scheduleSlot) {
+            const newSlot = _.cloneDeep(scheduleSlot)
+            newSlot.dateStamp = todayDateStamp.toString()
+            newSlot.dateStampRoutine = todayDateStamp.toString()
+            newSlot.edited = false
+            this._schedule.push(helpers.addAppointmentProps(newSlot))
+          }
+          if (rotationNum === 13) {
+            rotationNum = 0
+          } else {
+            rotationNum += 1
+          }
+        }
+        this.applyScheduleChanges()
+        this.removeBookedSlots()
+        resolve()
       } catch (error) {
         reject(error)
       }
-
-      const timeUTC = this.today.getTime()
-      const timeZoneOffset = this.today.getTimezoneOffset()
-      const timeEST = timeUTC - 1000 * 60 * timeZoneOffset // Adjust time for EST timezone
-
-      let rotationNum = Math.floor((timeEST / 1000 / 60 / 60 / 24) % 14)
-
-      for (let i = 0; i < this.daysAhead; i += 1) {
-        const currentDate = helpers.addDays(this.today, i)
-        const todayDateStamp = Number(helpers.dateStamp(currentDate))
-        const scheduleSlot = _.find(this._scheduleRotation, {
-          day: rotationNum
-        })
-
-        if (scheduleSlot) {
-          const newSlot = _.cloneDeep(scheduleSlot)
-          newSlot.dateStamp = todayDateStamp.toString()
-          newSlot.dateStampRoutine = todayDateStamp.toString()
-          newSlot.edited = false
-          this._schedule.push(helpers.addAppointmentProps(newSlot))
-        }
-        if (rotationNum === 13) {
-          rotationNum = 0
-        } else {
-          rotationNum += 1
-        }
-      }
-
-      this.applyScheduleChanges()
-      this.removeBookedSlots()
-      resolve()
     })
   }
 
@@ -143,7 +136,7 @@ export default class Scheduler {
         })
         resolve(apptsArray)
       } catch (error) {
-        reject(error)
+        reject(new Error('Could not fetch appointments from database.'))
       }
     })
   }
@@ -167,7 +160,7 @@ export default class Scheduler {
           resultArray.filter(t => t.dateStamp >= helpers.dateStamp(new Date()))
         )
       } catch (error) {
-        reject(error)
+        reject(new Error('Could not fetch schedule changes from database.'))
       }
     })
   }

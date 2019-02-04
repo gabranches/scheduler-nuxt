@@ -12,17 +12,17 @@
     <appointments v-if="scheduler && secure" v-bind:scheduler="scheduler"></appointments>
     <div class="spacer"></div>
     <!-- <location-emitter v-if="scheduler && secure"></location-emitter>
-    <div class="spacer"></div> -->
+    <div class="spacer"></div>-->
     <div class="row" v-if="secure">
       <div class="col form-header">Schedule Editor</div>
     </div>
     <editor v-if="scheduler && secure" v-bind:scheduler="scheduler"></editor>
-    
+
     <!-- <div class="spacer"></div>
     <div class="row" v-if="secure">
       <div class="col form-header">Schedule Planner</div>
     </div>
-    <planner v-if="scheduler && secure" v-bind:scheduler="scheduler"></planner> -->
+    <planner v-if="scheduler && secure" v-bind:scheduler="scheduler"></planner>-->
   </div>
 </template>
 
@@ -63,8 +63,12 @@ export default {
   methods: {
     async createSchedule() {
       const scheduler = new Scheduler(this.today, this.daysAhead)
-      await scheduler.buildSchedule()
-      this.scheduler = scheduler
+      try {
+        await scheduler.buildSchedule()
+        this.scheduler = scheduler
+      } catch (error) {
+        console.log(error)
+      }
     },
     runHash() {
       if (sha256(this.pass) === this.hash) {

@@ -352,8 +352,13 @@ export default {
   methods: {
     async createSchedule() {
       const scheduler = new Scheduler(this.today, this.daysAhead)
-      await scheduler.buildSchedule()
-      this.schedule = scheduler.schedule
+      try {
+        await scheduler.buildSchedule()
+        this.schedule = scheduler.schedule
+      } catch (error) {
+        console.log(error)
+        
+      }
     },
     /**
      * Runs every time the date changes

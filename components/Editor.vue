@@ -371,9 +371,6 @@ export default {
 
 .general-slot-options {
   padding: 15px 45px;
-  select {
-    // width: 200px;
-  }
 }
 
 .small-header {
