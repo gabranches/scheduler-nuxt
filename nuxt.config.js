@@ -19,12 +19,6 @@ module.exports = {
         rel: 'stylesheet',
         href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css'
       }
-    ],
-    script: [
-      {
-        src:
-          'https://www.google.com/recaptcha/api.js'
-      }
     ]
   },
 

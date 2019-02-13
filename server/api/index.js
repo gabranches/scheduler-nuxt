@@ -61,13 +61,13 @@ app.post('/add/appointment', async (request, response) => {
     const appointment = request.body.appointment
     await firebase.addAppointment(appointment)
     logger.info(`Added appointment ${JSON.stringify(appointment)}`)
-    mail.send(appointment)
+    await mail.send(appointment)
     response.status(200).send({
       success: true,
       text: 'Appointment added.'
     })
   } catch (error) {
-    logger.error(error)
+    logger.error(error.toString())
     response.status(500).send({
       success: false,
       text: 'Not able to add appointment due to server error.'

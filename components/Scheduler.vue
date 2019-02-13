@@ -118,12 +118,7 @@
                       <li v-for="error in errors" v-bind:key="error">{{ error }}</li>
                     </ul>
                   </div>
-                  <div class="form-group">
-                    <div
-                      class="g-recaptcha"
-                      data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"
-                    ></div>
-                  </div>
+
                   <div class="form-section" v-bind:class="{dim: steps.three === false}">
                     <button
                       v-bind:disabled="!steps.three || !steps.two"
@@ -189,15 +184,16 @@
         </div>
       </div>
     </div>
-    <no-ssr>
-      <div v-if="showConfirmation" class="row confirmation-wrapper">
-        <div class="col">
-          <div class="row">
-            <div class="col form-header">Please Confirm your Appointment</div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <table class="confirm-list">
+    <!-- <no-ssr> -->
+    <div class="row confirmation-wrapper">
+      <div class="col">
+        <div class="row">
+          <div class="col form-header">Please Confirm your Appointment</div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <table class="confirm-list">
+              <tbody>
                 <tr>
                   <td>
                     <span class="bold">First Name:</span>
@@ -246,15 +242,18 @@
                   </td>
                   <td>{{ appointment.timeText }}</td>
                 </tr>
-              </table>
-
-              <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
-              <button v-on:click="submit()" tag="button" class="btn btn-primary">Confirm</button>
+              </tbody>
+            </table>
+            <div class="form-group">
+              <div class="g-recaptcha" data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"></div>
             </div>
+            <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
+            <button v-on:click="submit()" tag="button" class="btn btn-primary">Confirm</button>
           </div>
         </div>
       </div>
-    </no-ssr>
+    </div>
+    <!-- </no-ssr> -->
   </div>
 </template>
 
@@ -269,6 +268,13 @@ import Scheduler from '~/assets/modules/Scheduler'
 import axios from 'axios'
 
 export default {
+  head: {
+    script: [
+      {
+        src: 'https://www.google.com/recaptcha/api.js'
+      }
+    ]
+  },
   data() {
     return {
       appointment: {
@@ -280,7 +286,7 @@ export default {
         type: null,
         name: null,
         dateText: null,
-        timeText: null,
+        timeText: null
       },
       appointmentSlots: null,
       date: null,
@@ -305,7 +311,7 @@ export default {
     }
   },
   created() {
-    this.today = new Date()   
+    this.today = new Date()
     this.createSchedule()
   },
   computed: {
@@ -365,7 +371,6 @@ export default {
         this.schedule = scheduler.schedule
       } catch (error) {
         console.log(error)
-        
       }
     },
     /**
@@ -416,7 +421,7 @@ export default {
     },
     confirm(state) {
       this.filledOut = state
-      setTimeout(() => grecaptcha.render(), 1000)
+      // setTimeout(() => grecaptcha.render(), 1000)
     },
     /**
      * Adds or removes days from the scheduleIndex
@@ -525,7 +530,7 @@ export default {
       }
 
       if (this.errors.length === 0) {
-        this.submit()
+        this.confirm(true)
       }
     },
     validEmail: function(email) {

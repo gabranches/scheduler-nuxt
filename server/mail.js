@@ -65,9 +65,19 @@ applyHtmlTemplate = appointment => {
 }
 
 self.send = appointment => {
-  const msg = {}
-  msg.html = applyHtmlTemplate(appointment)
-  sgMail.send({ ...defaults, to: appointment.email, ...msg })
+  return new Promise((resolve, reject) => {
+    const msg = {}
+    msg.html = applyHtmlTemplate(appointment)
+    sgMail
+      .send({ ...defaults, to: appointment.email, ...msg })
+      .then(() => {
+        resolve()
+      })
+      .catch(error => {
+        console.error(error.toString())
+        reject(new Error('Could not send confirmation email.'))
+      })
+  })
 }
 
 module.exports = self
