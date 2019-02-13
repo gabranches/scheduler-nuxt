@@ -136,6 +136,7 @@ export default class Scheduler {
         })
         resolve(apptsArray)
       } catch (error) {
+        console.log(error)
         reject(new Error('Could not fetch appointments from database.'))
       }
     })

@@ -24,7 +24,23 @@ async function start() {
   }
 
   // Enable CORS
-  app.use(cors())
+  // app.use(cors())
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    arrayOfValidOrigins = [
+      'http://localhost:3000'
+    ]
+    // In case you want to accept requests from everywhere, set:
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+    if (arrayOfValidOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    // Here allow all the HTTP methods you want
+    res.header('Access-Control-Allow-Methods', 'GET,POST,DELETE,HEAD,PUT,OPTIONS');
+    // Here you allow the headers for the HTTP requests to your server
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 
   // Give nuxt middleware to express
   app.use(nuxt.render)

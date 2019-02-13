@@ -272,7 +272,15 @@ export default {
   data() {
     return {
       appointment: {
-        status: 'Booked'
+        status: 'Booked',
+        firstName: null,
+        lastName: null,
+        email: null,
+        phone: null,
+        type: null,
+        name: null,
+        dateText: null,
+        timeText: null,
       },
       appointmentSlots: null,
       date: null,
