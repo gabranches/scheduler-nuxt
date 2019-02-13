@@ -1,6 +1,6 @@
 <template>
-  <div id="scheduler-wrapper">
-    <div v-if="showScheduler" class="row scheduler-wrapper">
+  <div id="scheduler-wrapper" v-cloak>
+    <div v-if="showScheduler && !filledOut" class="row scheduler-wrapper">
       <div class="col">
         <div class="row">
           <div class="col form-header">Schedule an Appointment</div>
@@ -185,7 +185,7 @@
       </div>
     </div>
     <!-- <no-ssr> -->
-    <div class="row confirmation-wrapper">
+    <div v-if="filledOut" class="row confirmation-wrapper">
       <div class="col">
         <div class="row">
           <div class="col form-header">Please Confirm your Appointment</div>
@@ -245,7 +245,8 @@
               </tbody>
             </table>
             <div class="form-group">
-              <div class="g-recaptcha" data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"></div>
+              <!-- <div class="g-recaptcha" data-sitekey="6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE"></div> -->
+              <div id="captcha"></div>
             </div>
             <button v-on:click="confirm(false)" type="button" class="btn btn-default">Go Back</button>
             <button v-on:click="submit()" tag="button" class="btn btn-primary">Confirm</button>
@@ -253,7 +254,6 @@
         </div>
       </div>
     </div>
-    <!-- </no-ssr> -->
   </div>
 </template>
 
@@ -271,7 +271,9 @@ export default {
   head: {
     script: [
       {
-        src: 'https://www.google.com/recaptcha/api.js'
+        src:
+          'https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit',
+        body: true
       }
     ]
   },
@@ -421,7 +423,18 @@ export default {
     },
     confirm(state) {
       this.filledOut = state
-      // setTimeout(() => grecaptcha.render(), 1000)
+      if (state) {
+        this.renderCaptcha(100)
+      }
+    },
+    renderCaptcha(delay) {
+      setTimeout(
+        () =>
+          grecaptcha.render('captcha', {
+            sitekey: '6LfeSIwUAAAAAM8YMLpSanfQ4c33nFbsml3jC3UE'
+          }),
+        delay
+      )
     },
     /**
      * Adds or removes days from the scheduleIndex
@@ -558,7 +571,8 @@ export default {
             console.log(response)
             window.location.href = '/confirm'
           } else {
-            console.log(response.data.body)
+            console.log(response.data.text)
+            alert('Please fill out the CAPTCHA!')
           }
         })
         .catch(function(error) {
@@ -681,5 +695,9 @@ export default {
 
 .confirmation-wrapper {
   margin-top: 30px;
+}
+
+v-cloak {
+  display: none;
 }
 </style>

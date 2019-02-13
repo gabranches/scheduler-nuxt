@@ -57,15 +57,17 @@ app.post('/add/appointment', async (request, response) => {
         success: false,
         text: 'Failed to verify captcha.'
       })
+      console.log('Captcha failed.')
+    } else {
+      const appointment = request.body.appointment
+      await firebase.addAppointment(appointment)
+      logger.info(`Added appointment ${JSON.stringify(appointment)}`)
+      await mail.send(appointment)
+      response.status(200).send({
+        success: true,
+        text: 'Appointment added.'
+      })
     }
-    const appointment = request.body.appointment
-    await firebase.addAppointment(appointment)
-    logger.info(`Added appointment ${JSON.stringify(appointment)}`)
-    await mail.send(appointment)
-    response.status(200).send({
-      success: true,
-      text: 'Appointment added.'
-    })
   } catch (error) {
     logger.error(error.toString())
     response.status(500).send({
