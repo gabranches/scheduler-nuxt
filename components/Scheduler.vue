@@ -423,9 +423,7 @@ export default {
     },
     confirm(state) {
       this.filledOut = state
-      if (state) {
-        this.renderCaptcha(100)
-      }
+      if (state) this.renderCaptcha(100)
     },
     renderCaptcha(delay) {
       setTimeout(
@@ -577,6 +575,7 @@ export default {
         })
         .catch(function(error) {
           console.log(error)
+          alert('There was an error submitting the form!')
         })
     }
   }

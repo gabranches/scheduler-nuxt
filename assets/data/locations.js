@@ -19,7 +19,7 @@ export default [
   },
   {
     tag: 'wic-florida-city',
-    name: 'Homestead Florida City WIC Office ',
+    name: 'Homestead Florida City WIC Office',
     address: '753 W Palm Drive',
     city: 'Florida City',
     state: 'FL',
