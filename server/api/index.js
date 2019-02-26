@@ -2,6 +2,7 @@ const bodyParser = require('body-parser')
 const express = require('express')
 const app = express()
 const firebase = require('../db/firebase.js')
+const azureSQL = require('../db/azureSQL.js')
 const verify = require('../verify.js')
 const logger = require('../logger.js')
 const mail = require('../mail.js')
@@ -60,7 +61,7 @@ app.post('/add/appointment', async (request, response) => {
       console.log('Captcha failed.')
     } else {
       const appointment = request.body.appointment
-      await firebase.addAppointment(appointment)
+      await azureSQL.addAppointment(appointment)
       logger.info(`Added appointment ${JSON.stringify(appointment)}`)
       await mail.send(appointment)
       response.status(200).send({

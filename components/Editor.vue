@@ -8,6 +8,7 @@
           </div>
           <div class="col-6 text-left">
             <select v-model="slot" class="form-control" @change="selectTimeSlot()">
+              <option v-bind:selected="true" disabled></option>
               <option
                 v-for="day in scheduleTidy"
                 v-bind:key="day.dateStampRoutine"
@@ -29,7 +30,7 @@
             >Routine Schedule</button>
           </div>
         </div>
-        <div class="row editor-options-wrapper">
+        <div v-if="slotSelected" class="row editor-options-wrapper">
           <div class="col editor-bottom-col general-slot-options">
             <div class="row">
               <span class="small-header bold">General Options</span>
@@ -179,10 +180,13 @@ export default {
       filters: {
         upcoming: true
       },
+      slotSelected: false,
       helpers,
       locations,
       originalSchedule: null,
-      slot: null,
+      slot: {
+        timeSlots: null,
+      },
       slotTypes,
       scheduleSlots,
       timeSlot: null,
@@ -193,8 +197,6 @@ export default {
     this.today = new Date()
     this.generateDays()
     this.originalSchedule = _.cloneDeep(this.scheduler.schedule)
-    this.slot = this.scheduleTidy[0]
-    this.timeSlot = this.slot.timeSlots[0]
   },
   computed: {
     scheduleTidy() {
@@ -215,6 +217,7 @@ export default {
       } else {
         this.timeSlot = this.slot.timeSlots[0]
       }
+      this.slotSelected = true
     },
     isTimeslotSelected(timeSlot) {
       return timeSlot == this.timeSlot

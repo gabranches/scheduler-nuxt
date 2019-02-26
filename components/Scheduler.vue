@@ -22,6 +22,7 @@
                         class="form-control"
                         id="appt-location"
                       >
+                        <option v-bind:selected="true" disabled></option>
                         <option
                           v-bind:key="loc.tag"
                           v-for="loc in locations"
@@ -286,9 +287,9 @@ export default {
         email: null,
         phone: null,
         type: null,
-        name: null,
         dateText: null,
-        timeText: null
+        timeText: null,
+        location: null,
       },
       appointmentSlots: null,
       date: null,

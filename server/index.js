@@ -28,7 +28,8 @@ async function start() {
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     arrayOfValidOrigins = [
-      'http://localhost:3000'
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
     ]
     // In case you want to accept requests from everywhere, set:
     // res.setHeader('Access-Control-Allow-Origin', '*');
