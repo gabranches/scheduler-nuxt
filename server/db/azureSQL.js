@@ -1,8 +1,7 @@
-const Connection = require('tedious').Connection
-const Request = require('tedious').Request
-const SqlString = require('sqlstring')
-
-const self = {}
+const Connection = require('tedious').Connection,
+  Request = require('tedious').Request,
+  SqlString = require('sqlstring'),
+  self = {}
 
 // Create connection to database
 const config = {
@@ -62,11 +61,7 @@ self.addAppointment = appointment => {
   return new Promise(async (resolve, reject) => {
     appointment.created = new Date().toISOString()
     appointment.status = 'Booked'
-    const keys = Object.keys(appointment).join(', ')
-    const values = Object.values(appointment)
-      .map(v => SqlString.escape(v))
-      .join(', ')
-    const query = `INSERT INTO appointments (${keys}) VALUES (${values})`
+    const query = `INSERT INTO appointments ${insertString(appointment)}`
     try {
       const res = await queryDatabase(query)
       resolve(res)
@@ -82,16 +77,16 @@ self.addScheduleChange = scheduleSlot => {
     scheduleSlot.timeSlots = JSON.stringify(scheduleSlot.timeSlots)
     scheduleSlot.edited = scheduleSlot.edited === true ? 1 : 0
     scheduleSlot.isRoutine = scheduleSlot.isRoutine === true ? 1 : 0
-
     const query = `
     IF EXISTS
-    (SELECT 1 FROM schedule_changes WHERE dateStampRoutine = ${scheduleSlot.dateStampRoutine})
+    (SELECT 1 FROM schedule_changes WHERE dateStampRoutine = ${
+      scheduleSlot.dateStampRoutine
+    })
     UPDATE schedule_changes
     ${updateString(scheduleSlot)}
     WHERE dateStampRoutine = ${scheduleSlot.dateStampRoutine}
     ELSE
     INSERT INTO schedule_changes ${insertString(scheduleSlot)}`
-
     try {
       const res = await queryDatabase(query)
       resolve(res)
@@ -106,6 +101,20 @@ self.getAppointments = () => {
     const query = 'SELECT * FROM appointments'
     queryDatabase(query)
       .then(res => resolve(res))
+      .catch(err => reject(err))
+  })
+}
+
+self.getScheduleChanges = () => {
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * FROM schedule_changes'
+    queryDatabase(query)
+      .then(res => {
+        res.forEach(slot => {
+          slot.timeSlots = JSON.parse(slot.timeSlots.replace(/\\/g, ''))
+        })
+        resolve(res)
+      })
       .catch(err => reject(err))
   })
 }
@@ -161,15 +170,15 @@ const testChange = {
 //     console.log(err)
 //   })
 
-self
-  .addScheduleChange(testChange)
-  .then(res => {
-    console.log('Change added.')
-    process.exit()
-  })
-  .catch(err => {
-    console.log(err)
-  })
+// self
+//   .addScheduleChange(testChange)
+//   .then(res => {
+//     console.log('Change added.')
+//     process.exit()
+//   })
+//   .catch(err => {
+//     console.log(err)
+//   })
 
 // queryDatabase('SELECT * FROM appointments')
 //   .then(result => {

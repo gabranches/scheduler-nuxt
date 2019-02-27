@@ -35,6 +35,12 @@ app.get('/appointments', (request, response) => {
     .catch(err => console.log(err))
 })
 
+app.get('/schedule-changes', (request, response) => {
+  azureSQL.getScheduleChanges()
+    .then(res => response.json(res))
+    .catch(err => console.log(err))
+})
+
 app.post('/update/status', async (request, response) => {
   try {
     await firebase.updateStatus(request.body.id, request.body.status)
