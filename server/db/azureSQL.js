@@ -77,8 +77,7 @@ self.addScheduleChange = scheduleSlot => {
     scheduleSlot.timeSlots = JSON.stringify(scheduleSlot.timeSlots)
     scheduleSlot.edited = scheduleSlot.edited === true ? 1 : 0
     scheduleSlot.isRoutine = scheduleSlot.isRoutine === true ? 1 : 0
-    const query = `
-    IF EXISTS
+    const query = `IF EXISTS
     (SELECT 1 FROM schedule_changes WHERE dateStampRoutine = ${
       scheduleSlot.dateStampRoutine
     })
@@ -116,6 +115,20 @@ self.getScheduleChanges = () => {
         resolve(res)
       })
       .catch(err => reject(err))
+  })
+}
+
+self.updateStatus = (id, status) => {
+  return new Promise(async (resolve, reject) => {
+    const query = `UPDATE appointments
+    SET status = ${SqlString.escape(status)}
+    WHERE id = ${id}`
+    try {
+      const res = await queryDatabase(query)
+      resolve(res)
+    } catch (error) {
+      reject(new Error(`Could not update status: ${error}`))
+    }
   })
 }
 
