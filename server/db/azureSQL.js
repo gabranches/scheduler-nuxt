@@ -121,7 +121,7 @@ self.getScheduleChanges = () => {
 self.updateStatus = (id, status) => {
   return new Promise(async (resolve, reject) => {
     const query = `UPDATE appointments
-    SET status = ${SqlString.escape(status)}
+    SET status = ${SqlString.escape(status)}, statusTime = '${new Date().toISOString()}'
     WHERE id = ${id}`
     try {
       const res = await queryDatabase(query)
