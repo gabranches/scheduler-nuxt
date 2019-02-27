@@ -1,5 +1,6 @@
 const Connection = require('tedious').Connection
 const Request = require('tedious').Request
+const SqlString = require('sqlstring')
 
 const self = {}
 
@@ -39,8 +40,17 @@ const queryDatabase = query => {
           })
           resultArr.push(rowObj)
         })
+        request.on('done', (rowCount, more) => {
+          resolve(resultArr)
+          connection.close()
+        })
         request.on('doneProc', (rowCount, more) => {
           resolve(resultArr)
+          connection.close()
+        })
+        request.on('error', function(err) {
+          reject(err)
+          connection.close()
         })
         connection.execSql(request)
       }
@@ -48,26 +58,13 @@ const queryDatabase = query => {
   })
 }
 
-// queryDatabase('SELECT * FROM appointments')
-//   .then(result => {
-//     console.log(result)
-//   })
-//   .catch(err => {
-//     console.log(err)
-//   })
-
-const testAppt = {
-  dateText: 'date',
-  email: 'email',
-  created: new Date().toISOString()
-}
-
 self.addAppointment = appointment => {
   return new Promise(async (resolve, reject) => {
     appointment.created = new Date().toISOString()
+    appointment.status = 'Booked'
     const keys = Object.keys(appointment).join(', ')
     const values = Object.values(appointment)
-      .map(v => `'${v}'`)
+      .map(v => SqlString.escape(v))
       .join(', ')
     const query = `INSERT INTO appointments (${keys}) VALUES (${values})`
     try {
@@ -79,10 +76,104 @@ self.addAppointment = appointment => {
   })
 }
 
+self.addScheduleChange = scheduleSlot => {
+  return new Promise(async (resolve, reject) => {
+    scheduleSlot.timeChanged = new Date().toISOString()
+    scheduleSlot.timeSlots = JSON.stringify(scheduleSlot.timeSlots)
+    scheduleSlot.edited = scheduleSlot.edited === true ? 1 : 0
+    scheduleSlot.isRoutine = scheduleSlot.isRoutine === true ? 1 : 0
+
+    const query = `
+    IF EXISTS
+    (SELECT 1 FROM schedule_changes WHERE dateStampRoutine = ${scheduleSlot.dateStampRoutine})
+    UPDATE schedule_changes
+    ${updateString(scheduleSlot)}
+    WHERE dateStampRoutine = ${scheduleSlot.dateStampRoutine}
+    ELSE
+    INSERT INTO schedule_changes ${insertString(scheduleSlot)}`
+
+    try {
+      const res = await queryDatabase(query)
+      resolve(res)
+    } catch (error) {
+      reject(new Error(`Could not add schedule change: ${error}`))
+    }
+  })
+}
+
+self.getAppointments = () => {
+  return new Promise((resolve, reject) => {
+    const query = 'SELECT * FROM appointments'
+    queryDatabase(query)
+      .then(res => resolve(res))
+      .catch(err => reject(err))
+  })
+}
+
+updateString = obj => {
+  let string = 'SET '
+  Object.keys(obj).forEach(key => {
+    string += `${key} = ${SqlString.escape(obj[key])}, `
+  })
+  return string.slice(0, -2)
+}
+
+insertString = obj => {
+  const keys = Object.keys(obj).join(', ')
+  const values = Object.values(obj)
+    .map(v => SqlString.escape(v))
+    .join(', ')
+  return `(${keys}) VALUES (${values})`
+}
+
+const testAppt = {
+  dateText: 'date',
+  email: 'email',
+  created: new Date().toISOString()
+}
+
+const testChange = {
+  date: '2019-04-09T04:00:00.000Z',
+  dateStamp: '20190419',
+  dateStampRoutine: '20200419',
+  dateText: 'Tuesday, April 11',
+  day: 5,
+  edited: false,
+  isRoutine: false,
+  location: 'wic-florida-city',
+  locationText: 'Homestead Florida City WIC Office',
+  timeSlots: [
+    {
+      test: 1
+    },
+    {
+      test: 2
+    }
+  ]
+}
+
 // self.addAppointment(testAppt)
 //   .then((res) => {
 //     console.log('Appt added.')
 //     process.exit()
+//   })
+//   .catch(err => {
+//     console.log(err)
+//   })
+
+self
+  .addScheduleChange(testChange)
+  .then(res => {
+    console.log('Change added.')
+    process.exit()
+  })
+  .catch(err => {
+    console.log(err)
+  })
+
+// queryDatabase('SELECT * FROM appointments')
+//   .then(result => {
+//     console.log(result)
 //   })
 //   .catch(err => {
 //     console.log(err)

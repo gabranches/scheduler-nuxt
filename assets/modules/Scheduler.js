@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import scheduleRotation from '~/assets/data/scheduleRotation'
 import helpers from '~/assets/modules/helpers'
+import axios from 'axios'
 
 export default class Scheduler {
   constructor(today, daysAhead) {
@@ -126,15 +127,16 @@ export default class Scheduler {
     return new Promise(async (resolve, reject) => {
       const apptsArray = []
       try {
-        const data = await fetch(
-          `${process.env.DB_URL}/appointments.json`
-        ).then(resp => resp.json())
-        _.keys(data).forEach(key => {
-          const val = data[key]
-          val.id = key
-          apptsArray.push(val)
-        })
-        resolve(apptsArray)
+        // const data = await fetch(
+        //   `${process.env.DB_URL}/appointments.json`
+        // ).then(resp => resp.json())
+        // _.keys(data).forEach(key => {
+        //   const val = data[key]
+        //   val.id = key
+        //   apptsArray.push(val)
+        // })
+        const res = await axios.get(`${process.env.HOST_URL}/api/appointments`)
+        resolve(res.data)
       } catch (error) {
         console.log(error)
         reject(new Error('Could not fetch appointments from database.'))
@@ -147,20 +149,23 @@ export default class Scheduler {
    */
   static fetchScheduleChanges() {
     return new Promise(async (resolve, reject) => {
-      const resultArray = []
+      // const resultArray = []
       try {
-        const data = await fetch(
-          `${process.env.DB_URL}/schedule-changes.json`
-        ).then(resp => resp.json())
-        _.keys(data).forEach(key => {
-          const val = data[key]
-          val.id = key
-          resultArray.push(val)
-        })
-        resolve(
-          resultArray.filter(t => t.dateStamp >= helpers.dateStamp(new Date()))
+      //   const data = await fetch(
+      //     `${process.env.DB_URL}/schedule-changes.json`
+      //   ).then(resp => resp.json())
+      //   _.keys(data).forEach(key => {
+      //     const val = data[key]
+      //     val.id = key
+      //     resultArray.push(val)
+      //   })
+        let res = await axios.get(`${process.env.DB_URL}/schedule-changes.json`)
+        // res.data.timeSlots = JSON.parse(res.data.timeSlots)
+        resolve([]
+          // res.data.filter(t => t.dateStamp >= helpers.dateStamp(new Date()))
         )
       } catch (error) {
+        console.log(error)
         reject(new Error('Could not fetch schedule changes from database.'))
       }
     })

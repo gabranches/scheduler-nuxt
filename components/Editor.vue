@@ -273,7 +273,6 @@ export default {
      * Submit schedule change to backend
      */
     async submitScheduleChange(scheduleSlot) {
-      scheduleSlot.timeChanged = new Date()
       scheduleSlot.edited = false
       await axios
         .post(`${process.env.HOST_URL}/api/add/schedule-change`, scheduleSlot)

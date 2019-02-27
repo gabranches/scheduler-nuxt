@@ -8,6 +8,7 @@ const logger = require('../logger.js')
 const mail = require('../mail.js')
 
 app.use(bodyParser.json())
+// app.use(sqlInjection)
 
 app.post('/location', function(request, response) {
   db.insertLocation(request.body)
@@ -26,6 +27,12 @@ app.get('/location', async (request, response) => {
     console.error(error)
     response.sendStatus(500)
   }
+})
+
+app.get('/appointments', (request, response) => {
+  azureSQL.getAppointments()
+    .then(res => response.json(res))
+    .catch(err => console.log(err))
 })
 
 app.post('/update/status', async (request, response) => {
