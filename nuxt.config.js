@@ -38,7 +38,7 @@ module.exports = {
     HOST_URL: process.env.HOST_URL,
     DB_URL: process.env.DB_URL,
     FIREBASE_KEY: process.env.FIREBASE_KEY,
-    CAPTCHA_SECRET: process.env.CAPTCHA_SECRET,
+    CAPTCHA_SECRET: process.env.CAPTCHA_SECRET
   },
 
   /*
@@ -76,7 +76,7 @@ module.exports = {
     extend(config, ctx) {
       // Run ESLint on save
       if (ctx.isDev && ctx.isClient) {
-        ;(config.devtool = '#source-map'),
+        // ;(config.devtool = '#source-map'),
           config.module.rules.push({
             enforce: 'pre',
             test: /\.(js|vue)$/,

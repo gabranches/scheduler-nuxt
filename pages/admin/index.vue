@@ -17,19 +17,12 @@
       <div class="col form-header">Schedule Editor</div>
     </div>
     <editor v-if="scheduler && secure" v-bind:scheduler="scheduler"></editor>
-
-    <!-- <div class="spacer"></div>
-    <div class="row" v-if="secure">
-      <div class="col form-header">Schedule Planner</div>
-    </div>
-    <planner v-if="scheduler && secure" v-bind:scheduler="scheduler"></planner>-->
   </div>
 </template>
 
 <script>
 import sha256 from 'js-sha256'
 import Appointments from '~/components/Appointments.vue'
-import Planner from '~/components/Planner.vue'
 import Editor from '~/components/Editor.vue'
 import globals from '~/assets/data/globals'
 import LocationEmitter from '~/components/LocationEmitter.vue'
@@ -39,7 +32,6 @@ export default {
   components: {
     appointments: Appointments,
     editor: Editor,
-    planner: Planner,
     'location-emitter': LocationEmitter
   },
   data() {
@@ -55,7 +47,7 @@ export default {
       pass: 'gamechanger'
     }
   },
-  created() {
+  mounted() {
     this.today = new Date()
     this.createSchedule()
     this.runHash()

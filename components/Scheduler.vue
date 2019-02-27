@@ -313,7 +313,7 @@ export default {
       showConfirmation: false
     }
   },
-  created() {
+  mounted() {
     this.today = new Date()
     this.createSchedule()
   },
