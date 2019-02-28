@@ -1,6 +1,7 @@
 const Connection = require('tedious').Connection,
   Request = require('tedious').Request,
   SqlString = require('sqlstring'),
+  logger = require('../logger.js'),
   self = {}
 
 // Create connection to database
@@ -24,10 +25,9 @@ const queryDatabase = query => {
     const connection = new Connection(config)
     connection.on('connect', err => {
       if (err) {
-        console.log(err)
         reject(err)
       } else {
-        console.log(query)
+        logger.info(query.replace(/\n\s+/g, ' '))
         const request = new Request(query, err => {
           if (err) reject(err)
         })
@@ -121,7 +121,8 @@ self.getScheduleChanges = () => {
 self.updateStatus = (id, status) => {
   return new Promise(async (resolve, reject) => {
     const query = `UPDATE appointments
-    SET status = ${SqlString.escape(status)}, statusTime = '${new Date().toISOString()}'
+    SET status = ${SqlString.escape(status)}, 
+    statusTime = '${new Date().toISOString()}'
     WHERE id = ${id}`
     try {
       const res = await queryDatabase(query)
@@ -147,58 +148,5 @@ insertString = obj => {
     .join(', ')
   return `(${keys}) VALUES (${values})`
 }
-
-const testAppt = {
-  dateText: 'date',
-  email: 'email',
-  created: new Date().toISOString()
-}
-
-const testChange = {
-  date: '2019-04-09T04:00:00.000Z',
-  dateStamp: '20190419',
-  dateStampRoutine: '20200419',
-  dateText: 'Tuesday, April 11',
-  day: 5,
-  edited: false,
-  isRoutine: false,
-  location: 'wic-florida-city',
-  locationText: 'Homestead Florida City WIC Office',
-  timeSlots: [
-    {
-      test: 1
-    },
-    {
-      test: 2
-    }
-  ]
-}
-
-// self.addAppointment(testAppt)
-//   .then((res) => {
-//     console.log('Appt added.')
-//     process.exit()
-//   })
-//   .catch(err => {
-//     console.log(err)
-//   })
-
-// self
-//   .addScheduleChange(testChange)
-//   .then(res => {
-//     console.log('Change added.')
-//     process.exit()
-//   })
-//   .catch(err => {
-//     console.log(err)
-//   })
-
-// queryDatabase('SELECT * FROM appointments')
-//   .then(result => {
-//     console.log(result)
-//   })
-//   .catch(err => {
-//     console.log(err)
-//   })
 
 module.exports = self

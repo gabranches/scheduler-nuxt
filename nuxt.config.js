@@ -15,10 +15,10 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      {
-        rel: 'stylesheet',
-        href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css'
-      }
+      // {
+      //   rel: 'stylesheet',
+      //   href: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.3/leaflet.css'
+      // }
     ]
   },
 
@@ -44,7 +44,7 @@ module.exports = {
   /*
   ** Plugins to load before mounting the App
   */
-  plugins: [{ src: '~/plugins/vue-leaflet', ssr: false }],
+  // plugins: [{ src: '~/plugins/vue-leaflet', ssr: false }],
 
   serverMiddleware: ['~/server/api/index', '~/server/verify/index'],
 
@@ -69,12 +69,16 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    vendor: ['leaflet'],
+    // vendor: ['leaflet'],
     /*
     ** You can extend webpack config here
     */
+    devtools: true,
     extend(config, ctx) {
       // Run ESLint on save
+      if (ctx.isClient) {
+        config.devtool = '#source-map'
+      }
       if (ctx.isDev && ctx.isClient) {
         // ;(config.devtool = '#source-map'),
           config.module.rules.push({

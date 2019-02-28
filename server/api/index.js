@@ -28,10 +28,10 @@ app.get('/schedule-changes', (request, response) => {
 app.post('/update/status', async (request, response) => {
   try {
     await azureSQL.updateStatus(request.body.id, request.body.status)
-    logger.info(`Status updated: ${JSON.stringify(request.body)}`)
+    // logger.info(`Status updated: ${JSON.stringify(request.body)}`)
     response.status(200).send('Status updated.')
   } catch (error) {
-    console.error(error)
+    logger.error(error)
     response.status(500).send('Could not update status due to server error.')
   }
 })
@@ -48,7 +48,7 @@ app.post('/add/appointment', async (request, response) => {
     } else {
       const appointment = request.body.appointment
       await azureSQL.addAppointment(appointment)
-      logger.info(`Added appointment ${JSON.stringify(appointment)}`)
+      // logger.info(`Added appointment ${JSON.stringify(appointment)}`)
       await mail.send(appointment)
       response.status(200).send({
         success: true,
@@ -71,7 +71,7 @@ app.post('/add/schedule-change', async (request, response) => {
       success: true,
       text: 'Schedule change successful.'
     })
-    logger.info(`Schedule changed ${JSON.stringify(request.body)}`)
+    // logger.info(`Schedule changed ${JSON.stringify(request.body)}`)
   } catch (error) {
     logger.error(error)
     response
