@@ -31,16 +31,7 @@ module.exports = {
   ** Global CSS
   */
   css: [],
-
-  env: {
-    DB_ID: process.env.DB_ID,
-    NODE_ENV: process.env.NODE_ENV,
-    HOST_URL: process.env.HOST_URL,
-    DB_URL: process.env.DB_URL,
-    FIREBASE_KEY: process.env.FIREBASE_KEY,
-    CAPTCHA_SECRET: process.env.CAPTCHA_SECRET
-  },
-
+  
   /*
   ** Plugins to load before mounting the App
   */
@@ -56,7 +47,7 @@ module.exports = {
     '@nuxtjs/axios',
     // Doc: https://bootstrap-vue.js.org/docs/
     'bootstrap-vue/nuxt',
-    'nuxt-leaflet'
+    // 'nuxt-leaflet'
   ],
   /*
   ** Axios module configuration
@@ -73,14 +64,11 @@ module.exports = {
     /*
     ** You can extend webpack config here
     */
-    devtools: true,
+    // devtools: true,
     extend(config, ctx) {
       // Run ESLint on save
-      if (ctx.isClient) {
-        config.devtool = '#source-map'
-      }
       if (ctx.isDev && ctx.isClient) {
-        // ;(config.devtool = '#source-map'),
+        ;(config.devtool = '#source-map'),
           config.module.rules.push({
             enforce: 'pre',
             test: /\.(js|vue)$/,

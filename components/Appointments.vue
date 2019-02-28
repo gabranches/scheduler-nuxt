@@ -284,7 +284,7 @@ export default {
     },
     async updateStatus(appt, status) {
       await axios
-        .post(`${process.env.HOST_URL}/api/update/status`, {
+        .post(`/api/update/status`, {
           id: appt.id,
           status
         })

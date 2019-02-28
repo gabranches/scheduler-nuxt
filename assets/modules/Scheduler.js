@@ -126,7 +126,7 @@ export default class Scheduler {
   static fetchAppointments() {
     return new Promise(async (resolve, reject) => {
       try {
-        const res = await axios.get(`${process.env.HOST_URL}/api/appointments`)
+        const res = await axios.get(`/api/appointments`)
         resolve(res.data)
       } catch (error) {
         console.log(error)
@@ -141,7 +141,7 @@ export default class Scheduler {
   static fetchScheduleChanges() {
     return new Promise(async (resolve, reject) => {
       try {
-        let res = await axios.get(`${process.env.HOST_URL}/api/schedule-changes`)
+        let res = await axios.get(`/api/schedule-changes`)
         resolve(
           res.data.filter(t => t.dateStamp >= helpers.dateStamp(new Date()))
         )

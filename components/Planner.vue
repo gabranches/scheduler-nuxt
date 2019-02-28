@@ -179,7 +179,7 @@ export default {
     },
     async updateStatus(appt, status) {
       try {
-        await this.$http.post(`${process.env.HOST_URL}/api/update/status`, {
+        await this.$http.post(`/api/update/status`, {
           id: appt.id,
           status
         })
@@ -200,7 +200,7 @@ export default {
       try {
         scheduleSlot.edited = false
         await axios.post(
-          `${process.env.HOST_URL}/api/add/schedule-change`,
+          `/api/add/schedule-change`,
           scheduleSlot
         )
         console.log('Schedule change submitted.')

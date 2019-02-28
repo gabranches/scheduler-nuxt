@@ -6,16 +6,16 @@ const Connection = require('tedious').Connection,
 
 // Create connection to database
 const config = {
-  server: 'gamechanger-scheduler.database.windows.net',
+  server: process.env.AZURE_SERVER,
   authentication: {
     type: 'default',
     options: {
-      userName: 'gxa292',
-      password: 'GameChangerAdmin0'
+      userName: process.env.AZURE_USER,
+      password: process.env.AZURE_PASSWORD
     }
   },
   options: {
-    database: 'gamechanger-scheduler',
+    database: process.env.AZURE_DB,
     encrypt: true
   }
 }

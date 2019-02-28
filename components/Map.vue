@@ -71,7 +71,7 @@ export default {
     },
     getCurrentLocation(fn) {
       $.ajax({
-        url: `${process.env.HOST_URL}/api/location`,
+        url: `/api/location`,
         success: data => {
           fn(data)
         },

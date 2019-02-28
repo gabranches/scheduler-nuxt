@@ -562,7 +562,7 @@ export default {
         appointment: apptData
       }
       axios
-        .post(`${process.env.HOST_URL}/api/add/appointment`, body)
+        .post(`/api/add/appointment`, body)
         .then(function(response) {
           console.log(response)
 

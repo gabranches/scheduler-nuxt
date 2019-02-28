@@ -52,7 +52,7 @@ export default {
           timestamp: data.timestamp,
         };
         console.log(data.coords);
-        await this.$http.post(`${process.env.HOST_URL}/update/location`, location);
+        await this.$http.post(`/update/location`, location);
         this.lastUpdated = `Last update: ${this.getTime(data.timestamp)}`;
       } catch (error) {
         console.error(error);
