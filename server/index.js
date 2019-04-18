@@ -5,7 +5,7 @@ const { Nuxt, Builder } = require('nuxt')
 const app = express()
 var cors = require('cors')
 const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8080
 
 app.set('port', port)
 
@@ -28,8 +28,8 @@ async function start() {
   app.use((req, res, next) => {
     const origin = req.headers.origin;
     arrayOfValidOrigins = [
-      'http://localhost:3000',
-      'http://127.0.0.1:3000',
+      'http://localhost:8080',
+      'http://127.0.0.1:8080',
     ]
     // In case you want to accept requests from everywhere, set:
     // res.setHeader('Access-Control-Allow-Origin', '*');
